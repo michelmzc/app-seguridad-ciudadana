@@ -1,7 +1,9 @@
 import React, {ReactNode, useState} from "react";
 import { View, StatusBar, StyleSheet, Platform} from "react-native";
-import { SafeAreaProvider, SafeAreaView   } from 'react-native-safe-area-context';
-import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
+import { SafeAreaView } from "react-native-safe-area-context";
+
+import Map from "./components/Map";
+
 
 interface StandardContainerProps{
   children: ReactNode;
@@ -30,25 +32,11 @@ const StandardContainer: React.FC<StandardContainerProps> = ({ children }) => {
 }
 
 
-const Map = () => {
-  return(
-    <MapView
-        provider={PROVIDER_GOOGLE} // remove if not using Google Maps
-        style={styles.map}
-        region={{
-          latitude:  -40.5742,
-          longitude: -73.1336,
-          latitudeDelta: 0.015,
-          longitudeDelta: 0.0121,
-        }}
-      >
-    </MapView>
-  )
-}
+
 const App = () => {
   return (
      <StandardContainer>
-        <Map></Map>
+        <Map/>
      </StandardContainer>
   );
 };
