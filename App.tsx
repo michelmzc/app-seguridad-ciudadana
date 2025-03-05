@@ -1,61 +1,36 @@
 import React, {useState} from "react";
-import {Text, View, Button, StyleSheet} from "react-native";
+import {View, StyleSheet} from "react-native";
+import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 
-
-type GreetingProps = {
-  name: string;
-}
-
-const Greeting = (props: GreetingProps) => {
-  return (
-    <View>
-      <Text>Hello {props.name}!</Text>
-    </View>
-  );
-};
-
-const LotsOfGreetings = () => {
-  return (
-    <View>
-      <Greeting name="Rexxar" />
-      <Greeting name="Jaina" />
-      <Greeting name="Valeria" />
-    </View>
-  );
-};
-
-const HelloWorldApp = () => {
-  return (
-    <View>
-      <Text>Hello, world!</Text>
-    </View>
-  );
-};
-
-const App = () => {
-
-  const [count, setCount] = useState(0);
-
-  return (
-    <View style={style.container}>
-      <LotsOfGreetings/>
-      <HelloWorldApp/>
-      <Text>You clicked {count} times</Text>
-      <Button
-        onPress={() => setCount(count + 1)}
-        title="Click me!"
-      />
-    </View>
-  );
-};
-
-// React Native Styles
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
+    ...StyleSheet.absoluteFillObject,
+    height: 400,
+    width: 400,
+    justifyContent: 'flex-end',
     alignItems: 'center',
   },
-});
+  map: {
+    ...StyleSheet.absoluteFillObject,
+  },
+ });
+
+const App = () => {
+  return (
+    <View style={styles.container}>
+    <MapView
+      provider={PROVIDER_GOOGLE} // remove if not using Google Maps
+      style={styles.map}
+      region={{
+        latitude:  -40.5742,
+        longitude: -73.1336,
+        latitudeDelta: 0.015,
+        longitudeDelta: 0.0121,
+      }}
+    >
+    </MapView>
+  </View>
+  );
+};
 
 export default App;
