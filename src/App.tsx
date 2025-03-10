@@ -33,7 +33,9 @@ const StandardContainer: React.FC<StandardContainerProps> = ({ children }) => {
 
 const App = () => {
   return (
+    <StandardContainer>
         <AppNavigator />
+    </StandardContainer>
   );
 };
 
