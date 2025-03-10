@@ -1,9 +1,8 @@
-import React, {ReactNode, useState} from "react";
+import React, {ReactNode} from "react";
 import { View, StatusBar, StyleSheet, Platform} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import Map from "./components/Map";
-
+import AppNavigator from "./navigation/AppNavigator";
 
 interface StandardContainerProps{
   children: ReactNode;
@@ -32,12 +31,9 @@ const StandardContainer: React.FC<StandardContainerProps> = ({ children }) => {
 }
 
 
-
 const App = () => {
   return (
-     <StandardContainer>
-        <Map/>
-     </StandardContainer>
+        <AppNavigator />
   );
 };
 

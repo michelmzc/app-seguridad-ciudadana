@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import {View, PermissionsAndroid, Platform, StyleSheet} from "react-native";
+import {PermissionsAndroid, Platform, StyleSheet} from "react-native";
 import MapView, {Marker} from "react-native-maps";
 import Geolocation from "@react-native-community/geolocation";
 
@@ -21,7 +21,7 @@ function getInitialState(){
 }
 
 
-const Map = () => {
+const MapScreen = () => {
     const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
   
     useEffect(() => {
@@ -67,9 +67,9 @@ const Map = () => {
             longitudeDelta: 0.0121,
           }}
         >
-          {location && <Marker coordinate={location} title="Tu ubicación" />}
+          {/* location && <Marker coordinate={location} title="Tu ubicación" /> */}
       </MapView>
     )
   }
 
-export default Map;
+export default MapScreen;
