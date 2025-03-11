@@ -4,16 +4,20 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  PermissionsAndroid,
   Platform,
+  PermissionsAndroid,
 } from "react-native";
 import MapView, { Region } from "react-native-maps";
 import Geolocation from "@react-native-community/geolocation";
 
+import ReportModal from "./ReportModal";
+
+
 const MapScreen = () => {
   const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
   const [selectedLocation, setSelectedLocation] = useState<{ latitude: number; longitude: number } | null>(null);
-
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  
   // Solicitar permisos y obtener ubicación inicial
   useEffect(() => {
     const requestLocationPermission = async () => {
@@ -45,13 +49,15 @@ const MapScreen = () => {
   const handleRegionChangeComplete = (region: Region) => {
     setSelectedLocation({ latitude: region.latitude, longitude: region.longitude });
   };
+  
+  // Función para abrir el moda
+  const openModal = () => {
+    setIsModalVisible(true);
+  };
 
-  // Función para registrar la ubicación
-  const registerLocation = () => {
-    if (selectedLocation) {
-      console.log(`Ubicación registrada:\nLat: ${selectedLocation.latitude}\nLng: ${selectedLocation.longitude}`);
-      // Aquí podrías enviar los datos a una API o guardarlos en la app
-    }
+  // Función para cerrar el modal 
+  const closeModal = () => {
+    setIsModalVisible(false);
   };
 
   return (
@@ -67,8 +73,8 @@ const MapScreen = () => {
         initialRegion={{
           latitude: location?.latitude || -40.5738, // Centro por defecto (Osorno)
           longitude: location?.longitude || -73.1358,
-          latitudeDelta: 0.015,
-          longitudeDelta: 0.0121,
+          latitudeDelta: 0.0001,
+          longitudeDelta: 0.0001,
         }}
         onRegionChangeComplete={handleRegionChangeComplete} // Captura la ubicación en el centro del mapa
       />
@@ -78,18 +84,19 @@ const MapScreen = () => {
         <Text style={styles.marker}>📍</Text>
       </View>
       
-      {/* Muestra las coordenadas seleccionadas
-      <View style={styles.coordinatesContainer}>
-        <Text style={styles.coordinatesText}>
-          Lat: {selectedLocation?.latitude.toFixed(6)} | Lng: {selectedLocation?.longitude.toFixed(6)}
-        </Text>
-      </View>
-      */}
+      {/* Modal de reporte */}
+      <ReportModal
+        visible={isModalVisible}
+        closeModal={closeModal}
+        selectedLocation={location}
+      />
 
-      {/* Botón para registrar ubicación */}
-      <TouchableOpacity style={styles.button} onPress={registerLocation}>
+      {/* Botón para crear reporte */}
+      <TouchableOpacity style={styles.button} onPress={openModal}>
         <Text style={styles.buttonText}>CREAR REPORTE</Text>
       </TouchableOpacity>
+
+       
     </View>
   );
 };
@@ -105,15 +112,6 @@ const styles = StyleSheet.create({
     marginTop: -24,
   },
   marker: { fontSize: 40 }, // Icono en el centro del mapa
-  coordinatesContainer: {
-    position: "absolute",
-    top: 20,
-    alignSelf: "center",
-    backgroundColor: "rgba(0,0,0,0.6)",
-    padding: 10,
-    borderRadius: 10,
-  },
-  coordinatesText: { color: "#fff", fontSize: 14 },
   button: {
     position: "absolute",
     bottom: 30,
