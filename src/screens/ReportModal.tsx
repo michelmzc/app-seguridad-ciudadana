@@ -1,58 +1,14 @@
 import React, { useState } from "react";
 import {View, Text, TextInput, TouchableOpacity, Modal, StyleSheet} from "react-native";
-
-const styles = StyleSheet.create({
-    modalBackground: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "rgba(0, 0, 0, 0.5)",
-      },
-      modalContainer: {
-        backgroundColor: "white",
-        padding: 20,
-        width: "80%",
-        borderRadius: 10,
-      },
-      modalTitle: {
-        fontSize: 20,
-        fontWeight: "bold",
-        marginBottom: 20,
-        textAlign: "center",
-      },
-      input: {
-        borderWidth: 1,
-        borderColor: "#ccc",
-        padding: 10,
-        marginBottom: 15,
-        borderRadius: 5,
-      },
-      closeButton: {
-        backgroundColor: "red",
-        paddingVertical: 12,
-        paddingHorizontal: 20,
-        borderRadius: 10,
-        alignSelf: "center",
-        marginTop: 10,
-      },
-      button: {
-        position: "absolute",
-        bottom: 30,
-        alignSelf: "center",
-        backgroundColor: "#4169e1",
-        paddingVertical: 12,
-        paddingHorizontal: 20,
-        borderRadius: 10,
-      },
-      buttonText: { color: "white", fontSize: 17, fontWeight: "bold" },
-});
+import Icon from 'react-native-vector-icons/Ionicons'
+import CategorySelector from "./components/CategorySelector";
 
 type ModalProps = { 
     visible: boolean,
     selectedLocation: { latitude: number; longitude: number } | null,
     closeModal: () => void;
 }
-// Función para mostrar el modal
+
 
 {/* Modal con formulario */}
 const ReportModal = (props: ModalProps) =>{
@@ -74,7 +30,7 @@ const ReportModal = (props: ModalProps) =>{
           // Aquí puedes enviar el reporte a tu backend usando una API REST
     
           // Después de enviar, cerrar el modal
-          props.onClose();
+          props.closeModal();
 
           return true;
         } else {
@@ -82,7 +38,7 @@ const ReportModal = (props: ModalProps) =>{
           return false;
         }
       }
-    // Función para abrir el moda
+    // Función para abrir el modal
     const openModal = () => {
         setIsModalVisible(true);
     };
@@ -99,37 +55,104 @@ const ReportModal = (props: ModalProps) =>{
             {/* Descripción */}
             <TextInput
               style={styles.input}
-              placeholder="Descripción"
+              placeholder="Descripción del reporte"
+              multiline={true}
+              numberOfLines={20}
+              maxLength={1000}
               value={reportDescription}
               onChangeText={setReportDescription}
             />
 
-            {/* Categoría */}
-            <TextInput
-              style={styles.input}
-              placeholder="Categoría (Ej. Aceras, Luminarias)"
-              value={category}
-              onChangeText={setCategory}
-            />
+            
 
-            {/* Botón para tomar foto */}
-            <TouchableOpacity style={styles.button}>
-              <Text style={styles.buttonText}>Subir foto o tomar foto</Text>
-            </TouchableOpacity>
+            <View style={styles.buttonContainer}>
 
-            {/* Botón de enviar */}
-            <TouchableOpacity style={styles.button} onPress={submitReport}>
-              <Text style={styles.buttonText}>ENVIAR REPORTE</Text>
-            </TouchableOpacity>
+              <View style={styles.buttonTop}>
+                {/*
+                <TouchableOpacity>
+                  <Icon name="image" color="#676767" size={34}/>
+                </TouchableOpacity>
+                <TouchableOpacity>
+                  <Icon name="camera" color="#676767" size={34}/>
+                </TouchableOpacity>
+                */}
+              </View>
 
-            {/* Botón para cerrar el modal */}
-            <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
-              <Text style={styles.buttonText}>Cerrar</Text>
-            </TouchableOpacity>
+              {/* Categoría */}
+              <CategorySelector></CategorySelector>
+              
+              <View style={styles.buttonBot}>
+                {/* Botón para cerrar el modal */}
+                <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
+                  <Text style={styles.buttonText}>Cerrar</Text>
+                </TouchableOpacity>
+                {/* Botón de enviar */}
+                <TouchableOpacity style={styles.button} onPress={submitReport}>
+                  <Text style={styles.buttonText}>Enviar</Text>
+                </TouchableOpacity>
+
+              </View>
+            </View>
           </View>
         </View>
       </Modal>
     )
-}
+}           
 
 export default ReportModal;
+
+const styles = StyleSheet.create({
+  modalBackground: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: "rgba(0, 0, 0, 0.5)",
+    },
+    modalContainer: {
+      backgroundColor: "white",
+      padding: 20,
+      width: "90%",
+      borderRadius: 10,
+    },
+    modalTitle: {
+      fontSize: 20,
+      fontWeight: "bold",
+      marginBottom: 10,
+      textAlign: "center",
+    },
+    input: {
+      borderWidth: 2,
+      borderColor: "#ccc",
+      padding: 5,
+      marginBottom: 5,
+      borderRadius: 5,
+    },
+    buttonContainer: {
+      flexDirection: "column",
+      justifyContent: "space-between",
+      alignItems: "center",
+    },
+    buttonTop: {
+      flexDirection: "row",
+      justifyContent: "flex-start",
+    },
+    buttonBot: {
+      flexDirection: "row",
+      justifyContent: "space-between"
+    },
+    closeButton: {
+      backgroundColor: "crimson",
+      paddingVertical: 12,
+      paddingHorizontal: 20,
+      borderRadius: 5,
+      alignSelf: "center",
+    },
+    button: {
+      backgroundColor: "royalblue",
+      paddingVertical: 10,
+      paddingHorizontal: 20,
+      borderRadius: 5,
+      margin: 5
+    },
+    buttonText: { color: "white", fontSize: 17, fontWeight: "bold" },
+});
