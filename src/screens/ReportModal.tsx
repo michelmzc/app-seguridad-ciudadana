@@ -15,7 +15,9 @@ const ReportModal = (props: ModalProps) =>{
     const [reportDescription, setReportDescription] = useState("");
     const [category, setCategory] = useState("");
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-    
+    const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+    const [success, setSuccess] = useState<boolean | null>(null);
+
     // Función para manejar el envío del reporte
     const submitReport = () => {
         if (reportDescription && selectedCategory) {
@@ -30,11 +32,14 @@ const ReportModal = (props: ModalProps) =>{
           // Aquí puedes enviar el reporte a tu backend usando una API REST
     
           // Después de enviar, cerrar el modal
-          props.closeModal();
-
+          //props.closeModal();
+          setSuccess(true); // Guarda si el envío fue exitoso o no
+          setShowConfirmationModal(true); // Muestra el modal de confirmación
           return true;
         } else {
           console.log("Por favor, completa todos los campos.");
+          setSuccess(false); // Guarda si el envío fue exitoso o no
+          setShowConfirmationModal(false); // Muestra el modal de confirmación
           return false;
         }
     }
@@ -44,7 +49,9 @@ const ReportModal = (props: ModalProps) =>{
     };
     // Función para cerrar el modal 
     const closeModal = () => {
-        setIsModalVisible(false);
+      setShowConfirmationModal(false)
+      setIsModalVisible(false)
+        
     };
     return (
        <Modal visible={props.visible} animationType="slide" transparent={true}>
@@ -93,6 +100,19 @@ const ReportModal = (props: ModalProps) =>{
             </View>
           </View>
         </View>
+        {/* MODAL DE CONFIRMACIÓN */}
+      <Modal visible={showConfirmationModal} transparent animationType="fade">
+        <View style={styles.confirmationContainer}>
+          <View style={styles.confirmationBox}>
+            <Text style={styles.confirmationText}>
+              {success ? "✅ Reporte enviado con éxito" : "❌ Error al enviar reporte"}
+            </Text>
+            <TouchableOpacity onPress={() => props.closeModal()}>
+              <Text style={styles.confirmationButton}>Aceptar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
       </Modal>
     )
 }           
@@ -155,4 +175,25 @@ const styles = StyleSheet.create({
       margin: 5
     },
     buttonText: { color: "white", fontSize: 17, fontWeight: "bold" },
+    confirmationContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: "rgba(0, 0, 0, 0.5)",
+    },
+    confirmationBox: {
+      backgroundColor: "white",
+      padding: 20,
+      borderRadius: 10,
+      alignItems: "center",
+    },
+    confirmationText: {
+      fontSize: 16,
+      marginBottom: 10,
+    },
+    confirmationButton: {
+      color: "#4169e1",
+      fontSize: 16,
+      fontWeight: "bold",
+    },
 });
