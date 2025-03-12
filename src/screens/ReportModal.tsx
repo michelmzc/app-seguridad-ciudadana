@@ -10,19 +10,19 @@ type ModalProps = {
 }
 
 
-{/* Modal con formulario */}
 const ReportModal = (props: ModalProps) =>{
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [reportDescription, setReportDescription] = useState("");
     const [category, setCategory] = useState("");
+    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
     
-      // Función para manejar el envío del reporte
-      const submitReport = () => {
-        if (reportDescription && category) {
+    // Función para manejar el envío del reporte
+    const submitReport = () => {
+        if (reportDescription && selectedCategory) {
           console.log("Reporte enviado:");
           console.log("Ubicación:", props.selectedLocation);
           console.log("Descripción:", reportDescription);
-          console.log("Categoría:", category);
+          console.log("Categoría:", selectedCategory);
           
           setReportDescription(reportDescription);
           setCategory(category);
@@ -37,7 +37,7 @@ const ReportModal = (props: ModalProps) =>{
           console.log("Por favor, completa todos los campos.");
           return false;
         }
-      }
+    }
     // Función para abrir el modal
     const openModal = () => {
         setIsModalVisible(true);
@@ -63,8 +63,6 @@ const ReportModal = (props: ModalProps) =>{
               onChangeText={setReportDescription}
             />
 
-            
-
             <View style={styles.buttonContainer}>
 
               <View style={styles.buttonTop}>
@@ -79,11 +77,11 @@ const ReportModal = (props: ModalProps) =>{
               </View>
 
               {/* Categoría */}
-              <CategorySelector></CategorySelector>
+              <CategorySelector selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory}></CategorySelector>
               
               <View style={styles.buttonBot}>
                 {/* Botón para cerrar el modal */}
-                <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
+                <TouchableOpacity style={styles.closeButton} onPress={props.closeModal}>
                   <Text style={styles.buttonText}>Cerrar</Text>
                 </TouchableOpacity>
                 {/* Botón de enviar */}
@@ -121,11 +119,13 @@ const styles = StyleSheet.create({
       textAlign: "center",
     },
     input: {
+      height: 200,
       borderWidth: 2,
       borderColor: "#ccc",
       padding: 5,
       marginBottom: 5,
       borderRadius: 5,
+      textAlignVertical:"top"
     },
     buttonContainer: {
       flexDirection: "column",
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
     },
     closeButton: {
       backgroundColor: "crimson",
-      paddingVertical: 12,
+      paddingVertical: 10,
       paddingHorizontal: 20,
       borderRadius: 5,
       alignSelf: "center",

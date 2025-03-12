@@ -1,13 +1,23 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 
-const categories = {
-  Emergencias: ["Actividad sospechosa", "Vandalismo", "Otra emergencia"],
-  Preventivas: ["Luminarias", "Acera", "Semáforos", "Señalización", "Otro"],
-};
+type PropsCategorySelector = {
+    selectedCategory: string | null;
+    setSelectedCategory: React.Dispatch<React.SetStateAction<string | null>>;
+}
 
-const CategorySelectorr = () => {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+const CategorySelectorr = (props: PropsCategorySelector) => {
+  const categories = {
+    Emergencias: ["Actividad sospechosa", "Vandalismo", "Otra emergencia"],
+    Preventivas: ["Luminarias", "Acera", "Semáforos", "Señalización", "Otro"],
+  };
+
+  // Maneja la selección de categoría
+  const handleCategorySelect = (category: string) => {
+    console.log(props.selectedCategory);
+    //props.selectedCategory = category;
+    props.setSelectedCategory(category);
+  };
 
   return (
     <View style={styles.container}>
@@ -22,14 +32,14 @@ const CategorySelectorr = () => {
                 key={category}
                 style={[
                   styles.categoryButton,
-                  selectedCategory === category && styles.selectedCategory,
+                  props.selectedCategory === category && styles.selectedCategory,
                 ]}
-                onPress={() => setSelectedCategory(category)}
+                onPress={() => handleCategorySelect(category)}
               >
                 <Text
                   style={[
                     styles.categoryText,
-                    selectedCategory === category && styles.selectedText,
+                    props.selectedCategory === category && styles.selectedText,
                   ]}
                 >
                   {category}
@@ -75,8 +85,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f5f5f5",
   },
   selectedCategory: {
-    backgroundColor: "#4169e1",
-    borderColor: "#4169e1",
+    backgroundColor: "cornflowerblue"
   },
   categoryText: {
     color: "#333",
