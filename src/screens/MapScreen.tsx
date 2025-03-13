@@ -15,7 +15,6 @@ import ReportModal from "./ReportModal";
 
 const MapScreen = () => {
   const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
-  const [selectedLocation, setSelectedLocation] = useState<{ latitude: number; longitude: number } | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   
   // Solicitar permisos y obtener ubicación inicial
@@ -35,7 +34,6 @@ const MapScreen = () => {
         (position) => {
           const { latitude, longitude } = position.coords;
           setLocation({ latitude, longitude });
-          setSelectedLocation({ latitude, longitude }); // Inicializa la ubicación seleccionada
         },
         (error) => console.log("Error al obtener la ubicación:", error),
         { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
@@ -43,11 +41,12 @@ const MapScreen = () => {
     };
 
     requestLocationPermission();
+    
   }, []);
 
   // Función para capturar la ubicación al mover el mapa
   const handleRegionChangeComplete = (region: Region) => {
-    setSelectedLocation({ latitude: region.latitude, longitude: region.longitude });
+    setLocation({ latitude: region.latitude, longitude: region.longitude });
   };
   
   // Función para abrir el moda
