@@ -10,7 +10,7 @@ import {
 import MapView, { Region } from "react-native-maps";
 import Geolocation from "@react-native-community/geolocation";
 
-import ReportModal from "./ReportModal";
+import ReportModal from "./components/ReportModal";
 
 
 const MapScreen = () => {
@@ -65,6 +65,7 @@ const MapScreen = () => {
       <MapView
         provider="google"
         style={styles.map}
+        googleMapId="c43c633a2f9311f8"
         showsUserLocation={true}
         showsMyLocationButton={true}
         rotateEnabled={false}

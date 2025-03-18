@@ -1,8 +1,9 @@
+
 import React, {ReactNode} from "react";
 import { View, StatusBar, StyleSheet, Platform} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import AppNavigator from "./navigation/AppNavigator";
+import AppNavigator from "./navigation/StackNavigator";
 
 interface StandardContainerProps{
   children: ReactNode;

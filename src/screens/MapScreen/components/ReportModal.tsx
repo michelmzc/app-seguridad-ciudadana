@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, TouchableOpacity, Modal, StyleSheet } from "react-native";
-import CategorySelector from "./components/CategorySelector";
+import CategorySelector from "./CategorySelector";
 
 type ModalProps = { 
     visible: boolean,
