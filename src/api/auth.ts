@@ -15,6 +15,7 @@ export const login = async (phoneNumber: string, password: string)  => {
         phoneNumber,
         password
     });
+    console.log(response);
     return response.data;
 }
 

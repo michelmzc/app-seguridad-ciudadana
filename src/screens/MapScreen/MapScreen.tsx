@@ -17,7 +17,7 @@ const MapScreen = () => {
   const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   
-  // Solicitar permisos y obtener ubicación inicial
+  // solicitar permisos y obtener ubicación inicial
   useEffect(() => {
     const requestLocationPermission = async () => {
       if (Platform.OS === "android") {

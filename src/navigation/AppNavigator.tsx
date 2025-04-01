@@ -29,8 +29,8 @@ export default function AppNavigator(){
       <Tab.Screen name="Mapa" component={MapScreen}  />
       <Tab.Screen name="Reportes" component={MapScreen} />
       <Tab.Screen name="Cámaras" component={CamerasScreen} />
-      <Tab.Screen name="Notificaciones" component={CamerasScreen} />
-      <Tab.Screen name="Menu" component={CamerasScreen} />
+      <Tab.Screen name="Notificaciones" component={MapScreen} />
+      <Tab.Screen name="Menu" component={MapScreen} />
     </Tab.Navigator>
   );
 }

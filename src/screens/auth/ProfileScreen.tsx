@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react"
 import { View, Text, Button, Alert } from "react-native"
 import { getProfile } from "../../api/auth"
-import { getToken, removeToken } from "utils/storage"
+import { getToken, removeToken } from "../../utils/storage"
 
 const ProfileScreen = ({ navigation }: any) => {
     const [user, setUser] = useState<any>(null);

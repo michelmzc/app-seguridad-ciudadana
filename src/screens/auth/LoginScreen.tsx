@@ -14,6 +14,11 @@ const LoginScreen = ({ navigation }: any) => {
             Alert.alert("Éxito", "Inicio de sesión exitoso");
             navigation.navigate("Profile");
         } catch (error) {
+            console.error(error);
+            if(error instanceof Error){
+                console.log(error.stack);
+            }
+
             Alert.alert("Error", "Credenciales incorrectas");
         }
     };
