@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import { View, Text, TextInput, Button, Alert } from "react-native"
 import { login } from "../../api/auth"
-import { saveToken } from "utils/storage"
+import { saveToken } from "../../utils/storage"
 
 const LoginScreen = ({ navigation }: any) => {
     const [phoneNumber, setPhoneNumber] = useState("");
@@ -15,10 +15,6 @@ const LoginScreen = ({ navigation }: any) => {
             navigation.navigate("Profile");
         } catch (error) {
             console.error(error);
-            if(error instanceof Error){
-                console.log(error.stack);
-            }
-
             Alert.alert("Error", "Credenciales incorrectas");
         }
     };

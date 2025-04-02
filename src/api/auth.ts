@@ -1,21 +1,23 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:3000/auth";
+const API_URL = "http://10.0.2.2:3000/auth";
 
 export interface LoginResponse {
     access_token: string;
 }
 
 export const register = async (phoneNumber: string, password: string) => {
-    return axios.post(`$API_URL/register`, { phoneNumber, password });
+    const response = axios.post(`$API_URL/register`, { phoneNumber, password });
+    console.log(response);
+    return  response
 };
 
 export const login = async (phoneNumber: string, password: string)  => {
     const response = await axios.post<LoginResponse>(`${API_URL}/login`, {
-        phoneNumber,
-        password
+        "phoneNumber":phoneNumber,
+        "password":password
     });
-    console.log(response);
+    console.log(`Respuesta de ${API_URL}/login:`, response);
     return response.data;
 }
 
