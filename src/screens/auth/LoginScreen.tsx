@@ -1,21 +1,18 @@
 import React, { useState } from "react"
 import { View, Text, TextInput, Button, Alert } from "react-native"
-import { login } from "../../api/auth"
-import { saveToken } from "../../utils/storage"
+import { useAuth } from "../../api/auth/useAuth";
 
 const LoginScreen = ({ navigation }: any) => {
+    const { login } = useAuth();
     const [phoneNumber, setPhoneNumber] = useState("");
     const [password, setPassword] = useState("");
 
     const handleLogin = async () => {
         try {
-            const data = await login(phoneNumber, password);
-            await saveToken(data.access_token);
-            Alert.alert("Éxito", "Inicio de sesión exitoso");
-            navigation.navigate("Profile");
+            await login(phoneNumber, password);
         } catch (error) {
             console.error(error);
-            Alert.alert("Error", "Credenciales incorrectas");
+            Alert.alert("Error de login", "Credenciales incorrectas");
         }
     };
 

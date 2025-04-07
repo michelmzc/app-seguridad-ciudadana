@@ -5,6 +5,7 @@ import CameraStreamScreen from "../screens/CameraScreen/components/CameraStreamS
 import { Camera } from "../types";
 import LoginScreen from "../screens/auth/LoginScreen";
 import ProfileScreen from "../screens/auth/ProfileScreen";
+import { useAuth } from "../api/auth/useAuth";
 
 // Definir los tipos de navegación
 export type RootStackParamList = {
@@ -17,16 +18,24 @@ export type RootStackParamList = {
 const Stack = createStackNavigator<RootStackParamList>();
 
 const AppNavigator = () => {
+  const { user } = useAuth(); 
+
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="Login"
-        screenOptions={{ headerShown: false }} // oculta el header
-      >
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Profile" component={ProfileScreen} />
-        <Stack.Screen name="Tabs" component={BottomNavigator} />
-        <Stack.Screen name="CameraStream" component={CameraStreamScreen} />
+        screenOptions={{ headerShown: false }} >
+          {!user ? (
+            // si no hay usuario mostrar login 
+            <Stack.Screen name="Login" component={LoginScreen} />
+          ) : (
+            // si hay usuario, mostrar las pantallas internas
+            <>
+              <Stack.Screen name="Tabs" component={BottomNavigator} />
+              <Stack.Screen name="Profile" component={ProfileScreen} />
+              <Stack.Screen name="CameraStream" component={CameraStreamScreen} />
+            </>
+          )}
+
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -4,6 +4,7 @@ import { View, StatusBar, StyleSheet, Platform} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import AppNavigator from "./navigation/StackNavigator";
+import { AuthProvider } from "./api/auth/AuthContext";
 
 interface StandardContainerProps{
   children: ReactNode;
@@ -34,9 +35,11 @@ const StandardContainer: React.FC<StandardContainerProps> = ({ children }) => {
 
 const App = () => {
   return (
-    <StandardContainer>
-        <AppNavigator />
-    </StandardContainer>
+    <AuthProvider>
+      <StandardContainer>
+          <AppNavigator />
+      </StandardContainer>
+    </AuthProvider>
   );
 };
 

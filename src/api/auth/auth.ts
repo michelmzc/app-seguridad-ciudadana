@@ -1,4 +1,5 @@
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const API_URL = "http://10.0.2.2:3000";
 
@@ -13,12 +14,23 @@ export const register = async(phoneNumber: string, password: string) => {
 };
 
 export const login = async(phoneNumber: string, password: string)  => {
-    const response = await axios.post<LoginResponse>(`${API_URL}/auth/login`, {
-        "phoneNumber":phoneNumber,
-        "password":password
-    });
-    console.log(`Respuesta de ${API_URL}/auth/login:`, response);
-    return response.data;
+    try {
+        const response = await axios.post<LoginResponse>(`${API_URL}/auth/login`, {
+            "phoneNumber":phoneNumber,
+            "password":password
+        });
+        console.log(`Respuesta de ${API_URL}/auth/login:`, response);
+
+        const token = response.data.access_token;
+
+        // guardar el token en almacenamiento local
+        await AsyncStorage.setItem('token', token);
+        
+        return response.data;
+    } catch (error) {
+        console.log("Error al iniciar sesión", error);
+    }
+    
 }
 
 export const getProfile = async(token: string) => {
