@@ -13,7 +13,7 @@ function get_auth_sign(time, nonce, appSecret){
     console.log("Nonce:", nonce);
     console.log("Sign:", sign);
 
-    return (time, nonce, sign)
+    return sign
 }
 
 const url_api = "https://openapi-or.easy4ip.com/openapi"
@@ -49,7 +49,8 @@ const getAccessToken = async () => {
 };
 
 //getAccessToken();
-let accessToken = 'At_0000or26d1c8e1533b4c4183caa3fe97'
+let accessToken = 'At_0000or5feaae8e21bc4c97b2c929a0a9'
+let deviceId = 'A738CALPCG7EDF1' // Serial Number
 
 const bindDeviceLive = async () => {
   const response = await fetch(url_api + "/bindDeviceLive", {
@@ -66,7 +67,7 @@ const bindDeviceLive = async () => {
       "id": uuidv4(),
       "params":{
         "streamId": 1,
-        "deviceId": "658F7AJGFBC18D4",
+        "deviceId": deviceId,
         "channelId":"0",
         "token": accessToken
       }
@@ -76,6 +77,7 @@ const bindDeviceLive = async () => {
   const data = await response.json();
   console.log(data);
 };
+//bindDeviceLive()
 
 const getLiveStreamInfo = async () => {
   const response = await fetch(url_api + "/getLiveStreamInfo", {
@@ -91,7 +93,7 @@ const getLiveStreamInfo = async () => {
       },
       "id": uuidv4(),
       "params":{
-        "deviceId":"658F7AJGFBC18D4",
+        "deviceId":deviceId,
         "channelId":"0",
         "token": accessToken
       }
@@ -101,6 +103,7 @@ const getLiveStreamInfo = async () => {
   const data = await response.json();
   console.log(data);
 };
+//getLiveStreamInfo();
 
 const queryLiveStatus = async () => {
   const response = await fetch(url_api + "/queryLiveStatus", {
@@ -125,6 +128,7 @@ const queryLiveStatus = async () => {
   const data = await response.json();
   console.log(data);
 };
+//queryLiveStatus();
 
 const queryDeviceRtmpLive = async () => {
   const response = await fetch(url_api + "/queryDeviceRtmpLive", {
@@ -141,7 +145,7 @@ const queryDeviceRtmpLive = async () => {
       "id": uuidv4(),
       "params":{
         "token": accessToken,
-        "deviceId": "658F7AJGFBC18D4",
+        "deviceId": deviceId,
         "channelId": "0"
       }
     })
@@ -150,6 +154,7 @@ const queryDeviceRtmpLive = async () => {
   const data = await response.json();
   console.log(data);
 };
+//queryDeviceRtmpLive();
 
 const liveList = async () => {
   const response = await fetch(url_api + "/liveList", {
@@ -174,6 +179,7 @@ const liveList = async () => {
   const data = await response.json();
   console.log(data);
 };
+//liveList();
 
 const unbindLive = async () => {
   const response = await fetch(url_api + "/unbindLive", {
@@ -190,7 +196,7 @@ const unbindLive = async () => {
       "id": uuidv4(),
       "params":{
         "token": accessToken,
-        "deviceId": "658F7AJGFBC18D4",
+        "deviceId": deviceId,
       }
     })
   });
@@ -198,6 +204,7 @@ const unbindLive = async () => {
   const data = await response.json();
   console.log(data);
 };
+//unbindLive();
 
 const createDeviceRtmpLive = async () => {
   const response = await fetch(url_api + "/createDeviceRtmpLive", {
@@ -213,7 +220,7 @@ const createDeviceRtmpLive = async () => {
       },
       "id": uuidv4(),
       "params":{
-        "deviceId": "658F7AJGFBC18D4",
+        "deviceId": deviceId,
         "channelId": "0",
         "token": accessToken,
       }
@@ -223,6 +230,7 @@ const createDeviceRtmpLive = async () => {
   const data = await response.json();
   console.log(data);
 };
+//createDeviceRtmpLive();
 
 const queryRtmpLive = async () => {
   const response = await fetch(url_api + "/queryDeviceRtmpLive", {
@@ -238,7 +246,7 @@ const queryRtmpLive = async () => {
       },
       "id": uuidv4(),
       "params":{
-        "deviceId": "658F7AJGFBC18D4",
+        "deviceId": deviceId,
         "channelId": "0",
         "token": accessToken,
       }
@@ -248,6 +256,7 @@ const queryRtmpLive = async () => {
   const data = await response.json();
   console.log(data);
 };
+//queryRtmpLive();
 
 const deleteDeviceRtmpLive = async () => {
   const response = await fetch(url_api + "/deleteDeviceRtmpLive", {
@@ -263,7 +272,7 @@ const deleteDeviceRtmpLive = async () => {
       },
       "id": uuidv4(),
       "params":{
-        "deviceId": "658F7AJGFBC18D4",
+        "deviceId": deviceId,
         "channelId": "0",
         "token": accessToken,
       }
@@ -273,5 +282,4 @@ const deleteDeviceRtmpLive = async () => {
   const data = await response.json();
   console.log(data);
 };
-
-unbindLive();
+//deleteDeviceRtmpLive();
