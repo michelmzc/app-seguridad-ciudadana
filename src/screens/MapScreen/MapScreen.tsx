@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import MapView, { Region } from "react-native-maps";
 import Geolocation from "@react-native-community/geolocation";
+import Icon from 'react-native-vector-icons/Ionicons'
 
 import ReportModal from "./components/ReportModal";
 
@@ -16,6 +17,7 @@ import ReportModal from "./components/ReportModal";
 const MapScreen = () => {
   const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const mapRef = useRef<MapView>(null);
   
   // solicitar permisos y obtener ubicación inicial
   useEffect(() => {
@@ -44,6 +46,41 @@ const MapScreen = () => {
     
   }, []);
 
+  const goToMyLocation = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+      );
+
+      if (granted === PermissionsAndroid.RESULTS.GRANTED){
+        Geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            
+            const newRegion: Region = {
+              latitude,
+              longitude,
+              latitudeDelta: 0.005,
+              longitudeDelta: 0.005,
+            };
+            setLocation({ latitude, longitude });
+            mapRef.current?.animateToRegion(newRegion, 1000);
+            
+            console.log("📍 Ubicación actual:", latitude, longitude);
+          },
+          (error) => {
+            console.log("❌ Error al obtener la ubicación:", error.message);
+          },
+          { enableHighAccuracy: true, timeout:15000, maximumAge: 10000 }
+        );
+      } else {
+        console.log("Permiso de ubicación denegado.");
+      }
+    } catch (error) {
+      console.warn(error);
+    }
+  };
+
   // Función para capturar la ubicación al mover el mapa
   const handleRegionChangeComplete = (region: Region) => {
     setLocation({ latitude: region.latitude, longitude: region.longitude });
@@ -63,6 +100,7 @@ const MapScreen = () => {
     <View style={styles.container}>
       {/* Mapa */}
       <MapView
+        ref={mapRef}
         provider="google"
         style={styles.map}
         googleMapId="c43c633a2f9311f8"
@@ -96,6 +134,12 @@ const MapScreen = () => {
         <Text style={styles.buttonText}>CREAR REPORTE</Text>
       </TouchableOpacity>
 
+      <TouchableOpacity
+        style={[styles.buttonMyLocation]}
+        onPress={goToMyLocation}>
+           <Icon name="locate-sharp" color="white" size={26}/>
+      </TouchableOpacity>
+
        
     </View>
   );
@@ -122,6 +166,18 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   buttonText: { color: "white", fontSize: 17, fontWeight: "bold" },
+  buttonMyLocation: {
+    position: "absolute",
+    bottom: 20,
+    alignSelf: "flex-end",
+    backgroundColor: "#4169e1",
+    paddingVertical: 25,
+    paddingHorizontal: 25,
+    borderRadius: 100,
+    marginRight: 15,
+    fontSize:20,
+    fontWeight: "bold"
+  },
 });
 
 export default MapScreen;
