@@ -1,16 +1,38 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, FlatList, TouchableOpacity, Text, StyleSheet, Alert } from "react-native";
 import CameraItem from "./components/CameraItem";
 import CameraForm from "./components/CameraForm";
 import { Camera } from "../../types";
+import { getProfile } from "../../api/auth/auth";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const CamerasScreen: React.FC = () => {
-  const [cameras, setCameras] = useState<Camera[]>([
-    { id: "1", name: "Cruiser SC-EDF1", streamUrl: "rtmp://rtmpproxy-online-cf.imoulife.com:12966/live/openor187b54c274e14115aec46db4a6594ac3?source=open" },
-  ]);
+  
 
+  const [cameras, setCameras] = useState<Camera[]>([]);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [editingCamera, setEditingCamera] = useState<Camera | null>(null);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try{
+        const token = await AsyncStorage.getItem("token")
+        if (!token) return;  
+
+        const response = await getProfile(token);
+        const fetchedCameras = response.cameras.map((cam: any) => ({
+          id: cam._id,
+          name: cam.name,
+          streamUrl: cam.stream_url
+        }));
+
+        setCameras(fetchedCameras);
+      } catch (error) {
+        console.log("❌ Error al obtener perfil:", error);
+      }
+    };
+    fetchProfile();  
+  }, []);
 
   const handleSaveCamera = (camera: Omit<Camera, "id"> & { id?: string }) => {
     if (camera.id) {
