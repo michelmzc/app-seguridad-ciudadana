@@ -6,8 +6,7 @@ import { Camera } from "../../types";
 
 const CamerasScreen: React.FC = () => {
   const [cameras, setCameras] = useState<Camera[]>([
-    { id: "1", name: "Cámara 1", streamUrl: "rtsp://example.com/stream1" },
-    { id: "2", name: "Cámara 2", streamUrl: "rtsp://example.com/stream2" }
+    { id: "1", name: "Cruiser SC-EDF1", streamUrl: "rtmp://rtmpproxy-online-cf.imoulife.com:12966/live/openor187b54c274e14115aec46db4a6594ac3?source=open" },
   ]);
 
   const [modalVisible, setModalVisible] = useState<boolean>(false);
@@ -54,12 +53,6 @@ const CamerasScreen: React.FC = () => {
         <Text style={styles.addButtonText}>+ Agregar Cámara</Text>
       </TouchableOpacity>
 
-      <CameraForm 
-        visible={modalVisible} 
-        onClose={() => setModalVisible(false)}
-        onSave={handleSaveCamera} 
-        camera={editingCamera} 
-      />
     </View>
   );
 };

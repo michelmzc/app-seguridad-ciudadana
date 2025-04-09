@@ -230,7 +230,7 @@ const createDeviceRtmpLive = async () => {
   const data = await response.json();
   console.log(data);
 };
-//createDeviceRtmpLive();
+createDeviceRtmpLive();
 
 const queryRtmpLive = async () => {
   const response = await fetch(url_api + "/queryDeviceRtmpLive", {

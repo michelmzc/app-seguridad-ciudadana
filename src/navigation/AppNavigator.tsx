@@ -1,10 +1,7 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { createStaticNavigation } from "@react-navigation/native";
 import Icon from 'react-native-vector-icons/Ionicons'
 import MapScreen from "../screens/MapScreen/MapScreen";
 import CamerasScreen from "../screens/CameraScreen/CameraScreen";
-import ReportScreen from "@screens/MapScreen/components/ReportScreen";
-
 
 const Tab = createBottomTabNavigator();
 

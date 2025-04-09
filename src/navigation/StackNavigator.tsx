@@ -1,6 +1,6 @@
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
-import  BottomNavigator  from "./AppNavigator"; // Tu navegación principal con pestañas
+import  BottomNavigator  from "./AppNavigator"; // navegación principal con pestañas
 import CameraStreamScreen from "../screens/CameraScreen/components/CameraStreamScreen";
 import { Camera } from "../types";
 import LoginScreen from "../screens/auth/LoginScreen";
