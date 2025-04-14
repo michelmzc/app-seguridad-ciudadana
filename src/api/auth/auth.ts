@@ -1,7 +1,7 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const API_URL = "http://10.0.2.2:3000";
+const API_URL = "https://backend-seguridad-ciudadana.onrender.com";
 
 export interface LoginResponse {
     access_token: string;
