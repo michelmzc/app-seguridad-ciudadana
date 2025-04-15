@@ -51,6 +51,7 @@ react {
     // hermesFlags = ["-O", "-output-source-map"]
 
     /* Autolinking */
+    entryFile = file("../../index.tsx")  
     autolinkLibrariesWithApp()
 }
 
@@ -84,6 +85,11 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        externalNativeBuild {
+            cmake {
+                arguments "-DCMAKE_MAKE_PROGRAM=C:\\ninja\\ninja.exe", "-DCMAKE_OBJECT_PATH_MAX=1024"
+            }
+        }
     }
     signingConfigs {
         debug {
@@ -92,6 +98,15 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        release {
+            if (project.hasProperty('MY_RELEASE_STORE_FILE')) {
+                storeFile file(MY_RELEASE_STORE_FILE)
+                storePassword MY_RELEASE_STORE_PASSWORD
+                keyAlias MY_RELEASE_KEY_ALIAS
+                keyPassword MY_RELEASE_KEY_PASSWORD
+            }
+        }
+        
     }
     buildTypes {
         debug {
@@ -100,11 +115,17 @@ android {
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
-            minifyEnabled enableProguardInReleaseBuilds
-            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            //signingConfig signingConfigs.debug
+            //minifyEnabled enableProguardInReleaseBuilds
+            //proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+
+            signingConfig signingConfigs.release
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    
 }
 
 dependencies {
