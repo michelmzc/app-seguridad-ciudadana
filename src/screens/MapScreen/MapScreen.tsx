@@ -1,9 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Platform } from "react-native";
-import { check, request, PERMISSIONS, RESULTS } from 'react-native-permissions';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Platform,
+} from "react-native";
+import { check, request, PERMISSIONS, RESULTS } from "react-native-permissions";
 import MapView, { Region } from "react-native-maps";
 import Geolocation from "@react-native-community/geolocation";
-import Icon from 'react-native-vector-icons/Ionicons';
+import Icon from "react-native-vector-icons/Ionicons";
 
 import ReportModal from "./components/ReportModal";
 
@@ -13,86 +19,44 @@ const MapScreen = () => {
   const mapRef = useRef<MapView>(null);
 
   // Solicitar permisos y obtener ubicación inicial
-  useEffect(() => {
-    const requestLocationPermission = async () => {
-      if (Platform.OS === "android") {
-        const finePermissionStatus = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
-        const coarsePermissionStatus = await request(PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION);
-
-        if (finePermissionStatus !== RESULTS.GRANTED || coarsePermissionStatus !== RESULTS.GRANTED) {
-          console.log("❌ Permiso de ubicación denegado");
-          return;
-        }
-      }
-
-      // Si los permisos están otorgados, obtenemos la ubicación
-      Geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          setLocation({ latitude, longitude });
-        },
-        (error) => console.log("Error al obtener la ubicación:", error.code, error.message),
-        { enableHighAccuracy: true, timeout: 30000, maximumAge: 10000 }
-      );
-    };
-
-    requestLocationPermission();
-  }, []);
 
   const goToMyLocation = async () => {
     try {
       if (Platform.OS === "android") {
-        const finePermissionStatus = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
-        const coarsePermissionStatus = await request(PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION);
+        const statusFineLocation = await check(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
+        const statusCoarseLocation = await check(PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION);
 
-        if (finePermissionStatus !== RESULTS.GRANTED || coarsePermissionStatus !== RESULTS.GRANTED) {
-          console.log("❌ Permisos de ubicación denegados.");
-          return;
+        if (
+          statusFineLocation !== RESULTS.GRANTED ||
+          statusCoarseLocation !== RESULTS.GRANTED
+        ) {
+          const granted = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
+          const grantedCoarse = await request(PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION);
+
+          if (granted !== RESULTS.GRANTED || grantedCoarse !== RESULTS.GRANTED) {
+            console.log("❌ Permisos de ubicación denegados");
+            return;
+          }
         }
       }
 
-      // Intentamos obtener la ubicación con alta precisión
       Geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
-
           const newRegion: Region = {
             latitude,
             longitude,
             latitudeDelta: 0.005,
             longitudeDelta: 0.005,
           };
-
           setLocation({ latitude, longitude });
           mapRef.current?.animateToRegion(newRegion, 1000);
-          console.log("📍 Ubicación actual con alta precisión:", latitude, longitude);
+          console.log("📍 Ubicación actual:", latitude, longitude);
         },
         (error) => {
-          console.log("⚠️ Alta precisión falló:", error.message);
-
-          // Si falla, intentamos obtener la ubicación con baja precisión
-          Geolocation.getCurrentPosition(
-            (position) => {
-              const { latitude, longitude } = position.coords;
-
-              const newRegion: Region = {
-                latitude,
-                longitude,
-                latitudeDelta: 0.005,
-                longitudeDelta: 0.005,
-              };
-
-              setLocation({ latitude, longitude });
-              mapRef.current?.animateToRegion(newRegion, 1000);
-              console.log("📍 Ubicación actual con baja precisión:", latitude, longitude);
-            },
-            (err2) => {
-              console.log("❌ Falló también sin precisión:", err2.message);
-            },
-            { enableHighAccuracy: false, timeout: 10000, maximumAge: 10000 }
-          );
+          console.log("❌ Error al obtener la ubicación:", error.message);
         },
-        { enableHighAccuracy: true, timeout: 1000, maximumAge: 5000 }
+        { enableHighAccuracy: false, timeout: 15000, maximumAge: 10000 }
       );
     } catch (error) {
       console.warn("⚠️ Error inesperado:", error);
@@ -109,7 +73,7 @@ const MapScreen = () => {
     setIsModalVisible(true);
   };
 
-  // Función para cerrar el modal 
+  // Función para cerrar el modal
   const closeModal = () => {
     setIsModalVisible(false);
   };
@@ -139,22 +103,16 @@ const MapScreen = () => {
       <View style={styles.markerFixed}>
         <Text style={styles.marker}>📍</Text>
       </View>
-      
+
       {/* Modal de reporte */}
-      <ReportModal
-        visible={isModalVisible}
-        closeModal={closeModal}
-        selectedLocation={location}
-      />
+      <ReportModal visible={isModalVisible} closeModal={closeModal} selectedLocation={location} />
 
       {/* Botón para crear reporte */}
       <TouchableOpacity style={styles.button} onPress={openModal}>
         <Text style={styles.buttonText}>CREAR REPORTE</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity
-        style={[styles.buttonMyLocation]}
-        onPress={goToMyLocation}>
+      <TouchableOpacity style={[styles.buttonMyLocation]} onPress={goToMyLocation}>
         <Icon name="locate-sharp" color="white" size={26} />
       </TouchableOpacity>
     </View>
@@ -192,7 +150,7 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     marginRight: 15,
     fontSize: 20,
-    fontWeight: "bold"
+    fontWeight: "bold",
   },
 });
 
