@@ -1,83 +1,101 @@
 import React, { useState, useEffect, useRef } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Platform,
-  PermissionsAndroid,
-} from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Platform } from "react-native";
+import { check, request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 import MapView, { Region } from "react-native-maps";
 import Geolocation from "@react-native-community/geolocation";
-import Icon from 'react-native-vector-icons/Ionicons'
+import Icon from 'react-native-vector-icons/Ionicons';
 
 import ReportModal from "./components/ReportModal";
-
 
 const MapScreen = () => {
   const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const mapRef = useRef<MapView>(null);
-  
-  // solicitar permisos y obtener ubicación inicial
+
+  // Solicitar permisos y obtener ubicación inicial
   useEffect(() => {
     const requestLocationPermission = async () => {
       if (Platform.OS === "android") {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
-        );
-        if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-          console.log("Permiso de ubicación denegado");
+        const finePermissionStatus = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
+        const coarsePermissionStatus = await request(PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION);
+
+        if (finePermissionStatus !== RESULTS.GRANTED || coarsePermissionStatus !== RESULTS.GRANTED) {
+          console.log("❌ Permiso de ubicación denegado");
           return;
         }
       }
 
+      // Si los permisos están otorgados, obtenemos la ubicación
       Geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
           setLocation({ latitude, longitude });
         },
-        (error) => console.log("Error al obtener la ubicación:", error),
-        { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+        (error) => console.log("Error al obtener la ubicación:", error.code, error.message),
+        { enableHighAccuracy: true, timeout: 30000, maximumAge: 10000 }
       );
     };
 
     requestLocationPermission();
-    
   }, []);
 
   const goToMyLocation = async () => {
     try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
-      );
+      if (Platform.OS === "android") {
+        const finePermissionStatus = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
+        const coarsePermissionStatus = await request(PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION);
 
-      if (granted === PermissionsAndroid.RESULTS.GRANTED){
-        Geolocation.getCurrentPosition(
-          (position) => {
-            const { latitude, longitude } = position.coords;
-            
-            const newRegion: Region = {
-              latitude,
-              longitude,
-              latitudeDelta: 0.005,
-              longitudeDelta: 0.005,
-            };
-            setLocation({ latitude, longitude });
-            mapRef.current?.animateToRegion(newRegion, 1000);
-            
-            console.log("📍 Ubicación actual:", latitude, longitude);
-          },
-          (error) => {
-            console.log("❌ Error al obtener la ubicación:", error.message);
-          },
-          { enableHighAccuracy: true, timeout:15000, maximumAge: 10000 }
-        );
-      } else {
-        console.log("Permiso de ubicación denegado.");
+        if (finePermissionStatus !== RESULTS.GRANTED || coarsePermissionStatus !== RESULTS.GRANTED) {
+          console.log("❌ Permisos de ubicación denegados.");
+          return;
+        }
       }
+
+      // Intentamos obtener la ubicación con alta precisión
+      Geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+
+          const newRegion: Region = {
+            latitude,
+            longitude,
+            latitudeDelta: 0.005,
+            longitudeDelta: 0.005,
+          };
+
+          setLocation({ latitude, longitude });
+          mapRef.current?.animateToRegion(newRegion, 1000);
+          console.log("📍 Ubicación actual con alta precisión:", latitude, longitude);
+        },
+        (error) => {
+          console.log("⚠️ Alta precisión falló:", error.message);
+
+          // Si falla, intentamos obtener la ubicación con baja precisión
+          Geolocation.getCurrentPosition(
+            (position) => {
+              const { latitude, longitude } = position.coords;
+
+              const newRegion: Region = {
+                latitude,
+                longitude,
+                latitudeDelta: 0.005,
+                longitudeDelta: 0.005,
+              };
+
+              setLocation({ latitude, longitude });
+              mapRef.current?.animateToRegion(newRegion, 1000);
+              console.log("📍 Ubicación actual con baja precisión:", latitude, longitude);
+            },
+            (err2) => {
+              console.log("❌ Falló también sin precisión:", err2.message);
+            },
+            { enableHighAccuracy: false, timeout: 10000, maximumAge: 10000 }
+          );
+        },
+        { enableHighAccuracy: true, timeout: 1000, maximumAge: 5000 }
+      );
     } catch (error) {
-      console.warn(error);
+      console.warn("⚠️ Error inesperado:", error);
     }
   };
 
@@ -85,8 +103,8 @@ const MapScreen = () => {
   const handleRegionChangeComplete = (region: Region) => {
     setLocation({ latitude: region.latitude, longitude: region.longitude });
   };
-  
-  // Función para abrir el moda
+
+  // Función para abrir el modal
   const openModal = () => {
     setIsModalVisible(true);
   };
@@ -137,10 +155,8 @@ const MapScreen = () => {
       <TouchableOpacity
         style={[styles.buttonMyLocation]}
         onPress={goToMyLocation}>
-           <Icon name="locate-sharp" color="white" size={26}/>
+        <Icon name="locate-sharp" color="white" size={26} />
       </TouchableOpacity>
-
-       
     </View>
   );
 };
@@ -175,7 +191,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 25,
     borderRadius: 100,
     marginRight: 15,
-    fontSize:20,
+    fontSize: 20,
     fontWeight: "bold"
   },
 });

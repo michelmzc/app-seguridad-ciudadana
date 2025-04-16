@@ -3,9 +3,11 @@
 */
 
 import axios from 'axios';
+import env from './env';
 
+const url = env().API_URL;
 const instance = axios.create({
-    baseURL: 'http://10.0.2.2:3000',
+    baseURL: url,
     headers: {
         'Content-Type': 'application/json'
     }
