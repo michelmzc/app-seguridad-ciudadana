@@ -4,12 +4,15 @@ name: Android Release Build
 on:
   push:
     branches: [ main ]
-  workflow_dispatch:
+  pull_request:
+    branches: [ main ]
+
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    env:
+      GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
