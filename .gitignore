@@ -1,3 +1,7 @@
+.env
+android/app/my-release-key.keystore
+android/gradle.properties
+
 # OSX
 #
 .DS_Store

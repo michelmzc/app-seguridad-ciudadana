@@ -12,6 +12,10 @@ module.exports = {
           "@utils": "./src/utils"
         }
       }
-    ]
+    ],
+    ['module:react-native-dotenv', {
+      moduleName: '@env',
+      path: '.env',
+    }]
   ]
 };
