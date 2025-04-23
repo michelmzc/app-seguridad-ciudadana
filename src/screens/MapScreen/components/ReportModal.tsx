@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, TouchableOpacity, Modal, StyleSheet } from "react-native";
 import CategorySelector from "./CategorySelector";
+import { sendReport } from "../../../api/reports";
 
 type ModalProps = { 
     visible: boolean,
@@ -25,23 +26,31 @@ const ReportModal = ({ visible, selectedLocation, closeModal }: ModalProps) => {
     }, [visible]);
 
     // Función para manejar el envío del reporte
-    const submitReport = () => {
-        if (!reportDescription || !selectedCategory) {
+    const submitReport = async () => {
+
+        const userId = "67feaf4b8f2ae8f973b5ca92"
+        if (!reportDescription || !selectedCategory || !selectedLocation) {
             console.log("Por favor, completa todos los campos.");
             setSuccess(false);
             setShowConfirmationModal(true);
             return;
         }
 
-        console.log("Reporte enviado:", {
-            Ubicación: selectedLocation,
-            Descripción: reportDescription,
-            Categoría: selectedCategory,
-        });
+        try {
+            await sendReport({
+                text: reportDescription,
+                category: selectedCategory,
+                location: selectedLocation,
+                userId: userId
+            });
 
-        // Aquí se enviaría el reporte a la API REST
+            console.log("Reporte enviado correctamente");
+            setSuccess(true);
+        } catch (error) {
+            console.error("Error al enviar el reporte", error);
+            setSuccess(false);
+        }
 
-        setSuccess(true);
         setShowConfirmationModal(true);
     };
 
