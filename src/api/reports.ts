@@ -23,4 +23,15 @@ export const sendReport = async ({
       },
       user: userId,
     });
-  };
+};
+
+export const getReports = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/reports`)
+    return response;
+  } catch (error) {
+    console.log('Error al obtener reportes:', error);
+    throw new Error('Error al obtener reportes:');
+    return false;
+  }
+};

@@ -2,6 +2,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Icon from 'react-native-vector-icons/Ionicons'
 import MapScreen from "../screens/MapScreen/MapScreen";
 import CamerasScreen from "../screens/CameraScreen/CameraScreen";
+import ReportListScreen from "@screens/ReportScreen/ReportScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -24,7 +25,7 @@ export default function AppNavigator(){
     })}
     >
       <Tab.Screen name="Mapa" component={MapScreen}  />
-      <Tab.Screen name="Reportes" component={MapScreen} />
+      <Tab.Screen name="Reportes" component={ReportListScreen} />
       <Tab.Screen name="Cámaras" component={CamerasScreen} />
       <Tab.Screen name="Notificaciones" component={MapScreen} />
       <Tab.Screen name="Menu" component={MapScreen} />
