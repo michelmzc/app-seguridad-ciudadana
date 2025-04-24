@@ -2,7 +2,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Icon from 'react-native-vector-icons/Ionicons'
 import MapScreen from "../screens/MapScreen/MapScreen";
 import CamerasScreen from "../screens/CameraScreen/CameraScreen";
-import ReportListScreen from "@screens/ReportScreen/ReportScreen";
+import ReportListScreen from "../screens/ReportsScreens/ReportListScreen";
 
 const Tab = createBottomTabNavigator();
 

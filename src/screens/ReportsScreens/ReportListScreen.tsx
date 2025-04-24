@@ -1,18 +1,18 @@
 // src/screens/ReportListScreen.tsx
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
-import axios from 'axios';
+import { View, Text, FlatList, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { getReports } from '../../api/reports';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { Report } from '../../types';
+import { RootStackParamList } from 'navigation/StackNavigator';
 
-type Report = {
-  _id: string;
-  text: string;
-  category: string;
-  location: { lat: number; lon: number };
-  user: string;
-};
+type ReportListNavigationProp = StackNavigationProp<RootStackParamList, 'ReportDetail'>;
+
+
 
 const ReportListScreen = () => {
+  const navigation = useNavigation<ReportListNavigationProp>();
   const [reports, setReports] = useState<Report[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -36,12 +36,15 @@ const ReportListScreen = () => {
   }, []);
 
   const renderItem = ({ item }: { item: Report }) => (
-    <View style={styles.item}>
-      <Text style={styles.title}>{item.category}</Text>
-      <Text style={styles.subtitle}>
-        Lat: {item.location.lat}, Lon: {item.location.lon}
-      </Text>
-    </View>
+    <TouchableOpacity onPress={() => navigation.navigate('ReportDetail', { report: item })}>
+      <View style={styles.item}>
+        <Text style={styles.title}>{item.category}</Text>
+        <Text style={styles.subtitle}> { item.text }</Text>
+        <Text style={styles.subtitle}>
+          Lat: {item.location.lat}, Lon: {item.location.lon}
+        </Text>
+      </View>
+    </TouchableOpacity>
   );
 
   return (

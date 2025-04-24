@@ -3,4 +3,11 @@ export interface Camera {
     name: string;
     streamUrl: string;
   }
-  
+
+export interface Report {
+    _id: string;
+    text: string;
+    category: string;
+    location: { lat: number; lon: number };
+    user: string;
+  };
