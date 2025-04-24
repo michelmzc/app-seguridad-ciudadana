@@ -12,14 +12,33 @@ import Geolocation from "@react-native-community/geolocation";
 import Icon from "react-native-vector-icons/Ionicons";
 
 import ReportModal from "./components/ReportModal";
+import ReportMarkers from "./components/ReportMarkers";
+import { Report } from "../../types";
+import { getReports } from "../../api/reports";
 
 const MapScreen = () => {
   const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const mapRef = useRef<MapView>(null);
+  const [reports, setReports] = useState<Report[]>([]);
+  const [region, setRegion] = useState<Region>({
+    latitude: -40.5738,
+    longitude: -73.1358,
+    latitudeDelta: 0.1,
+    longitudeDelta: 0.1,
+  });
 
+  useEffect(() => {
+    const fetchReports = async () => {
+      const response = await getReports();
+      if (response){
+        const data = response.data;
+        setReports(data);
+      }
+     };
+    fetchReports();
+  }, []);
   // Solicitar permisos y obtener ubicación inicial
-
   const goToMyLocation = async () => {
     try {
       if (Platform.OS === "android") {
@@ -46,8 +65,8 @@ const MapScreen = () => {
           const newRegion: Region = {
             latitude,
             longitude,
-            latitudeDelta: 0.005,
-            longitudeDelta: 0.005,
+            latitudeDelta: 0.1,
+            longitudeDelta: 0.1,
           };
           setLocation({ latitude, longitude });
           mapRef.current?.animateToRegion(newRegion, 1000);
@@ -87,17 +106,16 @@ const MapScreen = () => {
         style={styles.map}
         googleMapId="c43c633a2f9311f8"
         showsUserLocation={true}
-        showsMyLocationButton={true}
+        showsMyLocationButton={false}
         rotateEnabled={false}
         loadingEnabled={true}
-        initialRegion={{
-          latitude: location?.latitude || -40.5738, // Centro por defecto (Osorno)
-          longitude: location?.longitude || -73.1358,
-          latitudeDelta: 0.0001,
-          longitudeDelta: 0.0001,
-        }}
+        initialRegion={region}
         onRegionChangeComplete={handleRegionChangeComplete} // Captura la ubicación en el centro del mapa
-      />
+        
+      >
+        <ReportMarkers reports={reports || []} />
+      </MapView>
+      
 
       {/* Icono fijo en el centro del mapa */}
       <View style={styles.markerFixed}>
