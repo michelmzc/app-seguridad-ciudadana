@@ -1,15 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { View, Text, TextInput, TouchableOpacity, Modal, StyleSheet } from "react-native";
-import CategorySelector from "./CategorySelector";
-import { sendReport } from "../../../api/reports";
+import CategorySelector from "./CategorySelector"; // Asegúrate de que la ruta sea correcta
+import { sendReport } from "../../../api/reports"; // Asegúrate de que la ruta sea correcta
+import { AuthContext } from "../../../api/auth/AuthContext"; // Importa el AuthContext
 
 type ModalProps = { 
-    visible: boolean,
-    selectedLocation: { latitude: number; longitude: number } | null,
+    visible: boolean;
+    selectedLocation: { latitude: number; longitude: number } | null;
     closeModal: () => void;
+    userId: any; // Agrega userId aquí
+    updateReports: () => Promise<void>; // Si deseas pasar una función para actualizar los reportes
 }
 
-const ReportModal = ({ visible, selectedLocation, closeModal }: ModalProps) => {    
+const ReportModal = ({ visible, selectedLocation, closeModal, updateReports }: ModalProps) => {
+    const { user } = useContext(AuthContext); // Obtén el user del contexto global
     const [reportDescription, setReportDescription] = useState("");
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
     const [showConfirmationModal, setShowConfirmationModal] = useState(false);
@@ -27,9 +31,7 @@ const ReportModal = ({ visible, selectedLocation, closeModal }: ModalProps) => {
 
     // Función para manejar el envío del reporte
     const submitReport = async () => {
-
-        const userId = "67feaf4b8f2ae8f973b5ca92"
-        if (!reportDescription || !selectedCategory || !selectedLocation) {
+        if (!reportDescription || !selectedCategory || !selectedLocation || !user) {
             console.log("Por favor, completa todos los campos.");
             setSuccess(false);
             setShowConfirmationModal(true);
@@ -37,14 +39,19 @@ const ReportModal = ({ visible, selectedLocation, closeModal }: ModalProps) => {
         }
 
         try {
+            // Usamos el userId del contexto en vez de un ID hardcodeado
             await sendReport({
                 text: reportDescription,
                 category: selectedCategory,
                 location: selectedLocation,
-                userId: userId
+                userId: user._id, // Usamos user._id si el usuario tiene un campo _id
             });
 
             console.log("Reporte enviado correctamente");
+
+            // Llamar a updateReports para actualizar los reportes en el mapa
+            await updateReports();
+
             setSuccess(true);
         } catch (error) {
             console.error("Error al enviar el reporte", error);

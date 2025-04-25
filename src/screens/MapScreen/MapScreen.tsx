@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import {
   View,
   Text,
@@ -15,43 +15,45 @@ import ReportModal from "./components/ReportModal";
 import ReportMarkers from "./components/ReportMarkers";
 import { Report } from "../../types";
 import { getReports } from "../../api/reports";
+import { AuthContext } from "../../api/auth/AuthContext"; // Importa el AuthContext
+
+const INITIAL_OSORNO_REGION: Region = {
+  latitude: -40.5738,
+  longitude: -73.1358,
+  latitudeDelta: 0.05, // Zoom más amplio
+  longitudeDelta: 0.05,
+};
 
 const MapScreen = () => {
-  const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
+  const [location, setLocation] = useState<Region>(INITIAL_OSORNO_REGION);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const mapRef = useRef<MapView>(null);
   const [reports, setReports] = useState<Report[]>([]);
-  const [region, setRegion] = useState<Region>({
-    latitude: -40.5738,
-    longitude: -73.1358,
-    latitudeDelta: 0.1,
-    longitudeDelta: 0.1,
-  });
+
+  // Consume el contexto de autenticación de manera segura
+  const authContext = useContext(AuthContext);
+
+  // Asegurarnos de que el contexto no es null antes de acceder a user
+  const userId = authContext?.user?.id || ""; // Si no hay usuario, se usa un string vacío
 
   useEffect(() => {
     const fetchReports = async () => {
       const response = await getReports();
-      if (response){
-        const data = response.data;
-        setReports(data);
+      if (response) {
+        setReports(response.data);
       }
-     };
+    };
     fetchReports();
   }, []);
-  // Solicitar permisos y obtener ubicación inicial
+
   const goToMyLocation = async () => {
     try {
       if (Platform.OS === "android") {
-        const statusFineLocation = await check(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
-        const statusCoarseLocation = await check(PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION);
-
-        if (
-          statusFineLocation !== RESULTS.GRANTED ||
-          statusCoarseLocation !== RESULTS.GRANTED
-        ) {
+        const statusFine = await check(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
+        const statusCoarse = await check(PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION);
+        if (statusFine !== RESULTS.GRANTED || statusCoarse !== RESULTS.GRANTED) {
           const granted = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
           const grantedCoarse = await request(PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION);
-
           if (granted !== RESULTS.GRANTED || grantedCoarse !== RESULTS.GRANTED) {
             console.log("❌ Permisos de ubicación denegados");
             return;
@@ -65,12 +67,11 @@ const MapScreen = () => {
           const newRegion: Region = {
             latitude,
             longitude,
-            latitudeDelta: 0.1,
-            longitudeDelta: 0.1,
+            latitudeDelta: 0.005,
+            longitudeDelta: 0.005,
           };
-          setLocation({ latitude, longitude });
+          setLocation(newRegion);
           mapRef.current?.animateToRegion(newRegion, 1000);
-          console.log("📍 Ubicación actual:", latitude, longitude);
         },
         (error) => {
           console.log("❌ Error al obtener la ubicación:", error.message);
@@ -82,55 +83,54 @@ const MapScreen = () => {
     }
   };
 
-  // Función para capturar la ubicación al mover el mapa
   const handleRegionChangeComplete = (region: Region) => {
-    setLocation({ latitude: region.latitude, longitude: region.longitude });
+    setLocation(region);
   };
 
-  // Función para abrir el modal
-  const openModal = () => {
-    setIsModalVisible(true);
+  // Función para actualizar los reportes después de enviar uno
+  const updateReports = async () => {
+    const response = await getReports();
+    if (response) {
+      setReports(response.data);
+    }
   };
 
-  // Función para cerrar el modal
-  const closeModal = () => {
-    setIsModalVisible(false);
-  };
+  const openModal = () => setIsModalVisible(true);
+  const closeModal = () => setIsModalVisible(false);
 
   return (
     <View style={styles.container}>
-      {/* Mapa */}
       <MapView
         ref={mapRef}
         provider="google"
         style={styles.map}
-        googleMapId="c43c633a2f9311f8"
+        initialRegion={INITIAL_OSORNO_REGION}
         showsUserLocation={true}
         showsMyLocationButton={false}
         rotateEnabled={false}
         loadingEnabled={true}
-        initialRegion={region}
-        onRegionChangeComplete={handleRegionChangeComplete} // Captura la ubicación en el centro del mapa
-        
+        onRegionChangeComplete={handleRegionChangeComplete}
       >
-        <ReportMarkers reports={reports || []} />
+        <ReportMarkers reports={reports} />
       </MapView>
-      
 
-      {/* Icono fijo en el centro del mapa */}
       <View style={styles.markerFixed}>
         <Text style={styles.marker}>📍</Text>
       </View>
 
-      {/* Modal de reporte */}
-      <ReportModal visible={isModalVisible} closeModal={closeModal} selectedLocation={location} />
+      <ReportModal
+        visible={isModalVisible}
+        closeModal={closeModal}
+        selectedLocation={location}
+        userId={userId}  // Pasar el userId desde el contexto
+        updateReports={updateReports}  // Pasar la función para actualizar los reportes
+      />
 
-      {/* Botón para crear reporte */}
       <TouchableOpacity style={styles.button} onPress={openModal}>
         <Text style={styles.buttonText}>CREAR REPORTE</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={[styles.buttonMyLocation]} onPress={goToMyLocation}>
+      <TouchableOpacity style={styles.buttonMyLocation} onPress={goToMyLocation}>
         <Icon name="locate-sharp" color="white" size={26} />
       </TouchableOpacity>
     </View>
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
     marginLeft: -12,
     marginTop: -24,
   },
-  marker: { fontSize: 40 }, // Icono en el centro del mapa
+  marker: { fontSize: 40 },
   button: {
     position: "absolute",
     bottom: 30,
@@ -161,14 +161,10 @@ const styles = StyleSheet.create({
   buttonMyLocation: {
     position: "absolute",
     bottom: 20,
-    alignSelf: "flex-end",
+    right: 20,
     backgroundColor: "#4169e1",
-    paddingVertical: 25,
-    paddingHorizontal: 25,
+    padding: 16,
     borderRadius: 100,
-    marginRight: 15,
-    fontSize: 20,
-    fontWeight: "bold",
   },
 });
 

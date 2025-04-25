@@ -1,6 +1,3 @@
-/*
-    Contexto global para manejar la sesión del usuario
-*/
 import React, { createContext, useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from '../axios';
@@ -11,7 +8,12 @@ interface AuthContextType {
     logout: () => void;
 }
 
-export const AuthContext = createContext<AuthContextType | null>(null);
+export const AuthContext = createContext<AuthContextType>({
+    user: null, // Valor inicial de user
+    login: async () => {}, // Función login vacía por defecto
+    logout: () => {}, // Función logout vacía por defecto
+});
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [user, setUser] = useState<any>(null);
 
@@ -49,8 +51,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     return (
         <AuthContext.Provider value={{ user, login, logout }}>
-           { children } 
+           { children }
         </AuthContext.Provider>
     );
 }
-
