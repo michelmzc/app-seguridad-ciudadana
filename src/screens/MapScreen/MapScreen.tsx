@@ -1,21 +1,17 @@
-import React, { useState, useEffect, useRef, useContext } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Platform,
-} from "react-native";
-import { check, request, PERMISSIONS, RESULTS } from "react-native-permissions";
-import MapView, { Region } from "react-native-maps";
-import Geolocation from "@react-native-community/geolocation";
-import Icon from "react-native-vector-icons/Ionicons";
-
-import ReportModal from "./components/ReportModal";
-import ReportMarkers from "./components/ReportMarkers";
+import React, { useState, useEffect, useContext } from "react";
+import { View, StyleSheet } from "react-native";
+import  { Region } from "react-native-maps";
 import { Report } from "../../types";
 import { getReports } from "../../api/reports";
-import { AuthContext } from "../../api/auth/AuthContext"; // Importa el AuthContext
+import { AuthContext } from "../../api/auth/AuthContext";
+
+import ReportModal from "./components/ReportModal";
+import ReportButton from "./components/ReportButton";
+import MyLocationButton from "./components/MyLocationButton";
+import CenteredMarker from "./components/CenteredMarker";
+import { useCurrentLocation  } from "./hooks/useCurrentLocation";
+import MapViewComponent from "./components/MapViewComponent";
+
 
 const INITIAL_OSORNO_REGION: Region = {
   latitude: -40.5738,
@@ -27,7 +23,6 @@ const INITIAL_OSORNO_REGION: Region = {
 const MapScreen = () => {
   const [location, setLocation] = useState<Region>(INITIAL_OSORNO_REGION);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const mapRef = useRef<MapView>(null);
   const [reports, setReports] = useState<Report[]>([]);
 
   // Consume el contexto de autenticación de manera segura
@@ -35,6 +30,7 @@ const MapScreen = () => {
 
   // Asegurarnos de que el contexto no es null antes de acceder a user
   const userId = authContext?.user?.id || ""; // Si no hay usuario, se usa un string vacío
+  const { goToMyLocation, mapRef } = useCurrentLocation(setLocation);
 
   useEffect(() => {
     const fetchReports = async () => {
@@ -46,42 +42,6 @@ const MapScreen = () => {
     fetchReports();
   }, []);
 
-  const goToMyLocation = async () => {
-    try {
-      if (Platform.OS === "android") {
-        const statusFine = await check(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
-        const statusCoarse = await check(PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION);
-        if (statusFine !== RESULTS.GRANTED || statusCoarse !== RESULTS.GRANTED) {
-          const granted = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
-          const grantedCoarse = await request(PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION);
-          if (granted !== RESULTS.GRANTED || grantedCoarse !== RESULTS.GRANTED) {
-            console.log("❌ Permisos de ubicación denegados");
-            return;
-          }
-        }
-      }
-
-      Geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          const newRegion: Region = {
-            latitude,
-            longitude,
-            latitudeDelta: 0.005,
-            longitudeDelta: 0.005,
-          };
-          setLocation(newRegion);
-          mapRef.current?.animateToRegion(newRegion, 1000);
-        },
-        (error) => {
-          console.log("❌ Error al obtener la ubicación:", error.message);
-        },
-        { enableHighAccuracy: false, timeout: 15000, maximumAge: 10000 }
-      );
-    } catch (error) {
-      console.warn("⚠️ Error inesperado:", error);
-    }
-  };
 
   const handleRegionChangeComplete = (region: Region) => {
     setLocation(region);
@@ -100,23 +60,14 @@ const MapScreen = () => {
 
   return (
     <View style={styles.container}>
-      <MapView
+      <MapViewComponent 
         ref={mapRef}
-        provider="google"
-        style={styles.map}
-        initialRegion={INITIAL_OSORNO_REGION}
-        showsUserLocation={true}
-        showsMyLocationButton={false}
-        rotateEnabled={false}
-        loadingEnabled={true}
-        onRegionChangeComplete={handleRegionChangeComplete}
-      >
-        <ReportMarkers reports={reports} />
-      </MapView>
+        location={location}
+        setLocation={setLocation}
+        reports={reports}
+      />
 
-      <View style={styles.markerFixed}>
-        <Text style={styles.marker}>📍</Text>
-      </View>
+      <CenteredMarker />
 
       <ReportModal
         visible={isModalVisible}
@@ -125,14 +76,10 @@ const MapScreen = () => {
         userId={userId}  // Pasar el userId desde el contexto
         updateReports={updateReports}  // Pasar la función para actualizar los reportes
       />
+      
+      <ReportButton onPress={() => setIsModalVisible(true)} />
 
-      <TouchableOpacity style={styles.button} onPress={openModal}>
-        <Text style={styles.buttonText}>CREAR REPORTE</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.buttonMyLocation} onPress={goToMyLocation}>
-        <Icon name="locate-sharp" color="white" size={26} />
-      </TouchableOpacity>
+      <MyLocationButton onPress={goToMyLocation} />
     </View>
   );
 };
@@ -140,13 +87,6 @@ const MapScreen = () => {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   map: { ...StyleSheet.absoluteFillObject },
-  markerFixed: {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    marginLeft: -12,
-    marginTop: -24,
-  },
   marker: { fontSize: 40 },
   button: {
     position: "absolute",
