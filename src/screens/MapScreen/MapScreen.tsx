@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { View, StyleSheet } from "react-native";
-import  { Region } from "react-native-maps";
+import  MapView, { Region } from "react-native-maps";
 import { Report } from "../../types";
 import { getReports } from "../../api/reports";
 import { AuthContext } from "../../api/auth/AuthContext";
@@ -9,7 +9,7 @@ import ReportModal from "./components/ReportModal";
 import ReportButton from "./components/ReportButton";
 import MyLocationButton from "./components/MyLocationButton";
 import CenteredMarker from "./components/CenteredMarker";
-import { useCurrentLocation  } from "./hooks/useCurrentLocation";
+import useUserLocation from "./hooks/useUserLocation";
 import MapViewComponent from "./components/MapViewComponent";
 
 
@@ -24,28 +24,21 @@ const MapScreen = () => {
   const [location, setLocation] = useState<Region>(INITIAL_OSORNO_REGION);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [reports, setReports] = useState<Report[]>([]);
-
+  const mapRef = useRef<MapView>(null);
   // Consume el contexto de autenticación de manera segura
   const authContext = useContext(AuthContext);
-
   // Asegurarnos de que el contexto no es null antes de acceder a user
   const userId = authContext?.user?.id || ""; // Si no hay usuario, se usa un string vacío
-  const { goToMyLocation, mapRef } = useCurrentLocation(setLocation);
+  const { goToMyLocation } = useUserLocation(setLocation, mapRef);
+
+  const fetchReports = async () => {
+    const response = await getReports();
+    if (response) setReports(response.data);
+  };
 
   useEffect(() => {
-    const fetchReports = async () => {
-      const response = await getReports();
-      if (response) {
-        setReports(response.data);
-      }
-    };
     fetchReports();
   }, []);
-
-
-  const handleRegionChangeComplete = (region: Region) => {
-    setLocation(region);
-  };
 
   // Función para actualizar los reportes después de enviar uno
   const updateReports = async () => {
@@ -54,9 +47,6 @@ const MapScreen = () => {
       setReports(response.data);
     }
   };
-
-  const openModal = () => setIsModalVisible(true);
-  const closeModal = () => setIsModalVisible(false);
 
   return (
     <View style={styles.container}>
@@ -71,7 +61,7 @@ const MapScreen = () => {
 
       <ReportModal
         visible={isModalVisible}
-        closeModal={closeModal}
+        closeModal={() => setIsModalVisible(false)}
         selectedLocation={location}
         userId={userId}  // Pasar el userId desde el contexto
         updateReports={updateReports}  // Pasar la función para actualizar los reportes
@@ -85,27 +75,7 @@ const MapScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  map: { ...StyleSheet.absoluteFillObject },
-  marker: { fontSize: 40 },
-  button: {
-    position: "absolute",
-    bottom: 30,
-    alignSelf: "center",
-    backgroundColor: "#4169e1",
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 10,
-  },
-  buttonText: { color: "white", fontSize: 17, fontWeight: "bold" },
-  buttonMyLocation: {
-    position: "absolute",
-    bottom: 20,
-    right: 20,
-    backgroundColor: "#4169e1",
-    padding: 16,
-    borderRadius: 100,
-  },
+  container: { flex: 1 }
 });
 
 export default MapScreen;

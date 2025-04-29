@@ -17,10 +17,10 @@ const MapViewComponent = React.forwardRef<MapView, Props>(
       provider="google"
       style={styles.map}
       initialRegion={location}
-      showsUserLocation
+      showsUserLocation={true}
       showsMyLocationButton={false}
       rotateEnabled={false}
-      loadingEnabled
+      loadingEnabled={true}
       onRegionChangeComplete={setLocation}
     >
       <ReportMarkers reports={reports} />
