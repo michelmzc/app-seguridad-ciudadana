@@ -11,6 +11,7 @@ import MyLocationButton from "./components/MyLocationButton";
 import CenteredMarker from "./components/CenteredMarker";
 import useUserLocation from "./hooks/useUserLocation";
 import MapViewComponent from "./components/MapViewComponent";
+import RadarMarker from "./components/RadarMarker";
 
 
 const INITIAL_OSORNO_REGION: Region = {
@@ -58,6 +59,8 @@ const MapScreen = () => {
       />
 
       <CenteredMarker />
+
+      <RadarMarker center={{ latitude: -40.5738, longitude: -73.1358 }} radius={70} />
 
       <ReportModal
         visible={isModalVisible}
