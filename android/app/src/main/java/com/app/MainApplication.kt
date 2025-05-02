@@ -11,9 +11,13 @@ import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
 import com.facebook.react.defaults.DefaultReactNativeHost
 import com.facebook.react.soloader.OpenSourceMergedSoMapping
 import com.facebook.soloader.SoLoader
+mport com.swmansion.reanimated.ReanimatedJSIModulePackage; // Agrega esto
 
 class MainApplication : Application(), ReactApplication {
-
+  @Override
+  protected JSIModulePackage getJSIModulePackage() {
+    return new ReanimatedJSIModulePackage(); // ← y esto también
+  }
   override val reactNativeHost: ReactNativeHost =
       object : DefaultReactNativeHost(this) {
         override fun getPackages(): List<ReactPackage> =
