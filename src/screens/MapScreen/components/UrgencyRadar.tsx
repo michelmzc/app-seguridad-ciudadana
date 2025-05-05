@@ -20,14 +20,14 @@ const UrgencyRadar = ({ latitude, longitude }: Props) => {
 
   useEffect(() => {
     radius.value = withRepeat(
-      withTiming(50, { duration: 15 }),
+      withTiming(100, { duration: 15 }),
       -1,
       true
     );
   }, []);
 
   const animatedRadius = useDerivedValue(() => radius.value);
-
+  console.log("radar activado");
   return (
     <AnimatedCircle
       center={{ latitude, longitude }}

@@ -55,6 +55,10 @@ react {
     autolinkLibrariesWithApp()
 }
 
+project.ext.react = [
+    enableHermes: true  // o false, según estés usando Hermes
+]
+
 /**
  * Set this to true to Run Proguard on Release builds to minify the Java bytecode.
  */
@@ -88,7 +92,7 @@ println "GOOGLE_MAPS_API_KEY = $googleMapsApiKey"
 
 android {
     ndkVersion rootProject.ext.ndkVersion
-    buildToolsVersion rootProject.ext.buildToolsVersion
+    //buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
     namespace "com.app"
@@ -156,6 +160,8 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation("com.facebook.react:react-android")
     implementation "androidx.multidex:multidex:2.0.1"
+    implementation "com.facebook.react:react-android"
+
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
     } else {
