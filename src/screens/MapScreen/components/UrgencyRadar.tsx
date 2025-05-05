@@ -1,37 +1,17 @@
 // components/UrgencyRadar.tsx
-import React, { useEffect } from "react";
+import React from "react";
 import { Circle } from "react-native-maps";
-import Animated, {
-  useSharedValue,
-  withRepeat,
-  withTiming,
-  useDerivedValue,
-} from "react-native-reanimated";
 
 type Props = {
   latitude: number;
   longitude: number;
 };
 
-const AnimatedCircle = Animated.createAnimatedComponent(Circle);
-
 const UrgencyRadar = ({ latitude, longitude }: Props) => {
-  const radius = useSharedValue(0);
-
-  useEffect(() => {
-    radius.value = withRepeat(
-      withTiming(100, { duration: 15 }),
-      -1,
-      true
-    );
-  }, []);
-
-  const animatedRadius = useDerivedValue(() => radius.value);
-  console.log("radar activado");
   return (
-    <AnimatedCircle
+    <Circle
       center={{ latitude, longitude }}
-      radius={animatedRadius.value}
+      radius={50} // radio fijo
       strokeColor="rgba(255,0,0,0.5)"
       fillColor="rgba(255,0,0,0.2)"
     />
