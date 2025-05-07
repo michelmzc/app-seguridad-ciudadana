@@ -6,6 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { Report } from '../../types';
 import { RootStackParamList } from 'navigation/StackNavigator';
+import ReportCard from './components/ReportCard'
 
 type ReportListNavigationProp = StackNavigationProp<RootStackParamList, 'ReportDetail'>;
 
@@ -34,18 +35,30 @@ const ReportListScreen = () => {
   useEffect(() => {
     fetchReports();
   }, []);
-
+  const formatTimeAgo = (timestamp: string) => {
+    const now = new Date();
+    const then = new Date(timestamp);
+    const diff = Math.floor((now.getTime() - then.getTime()) / 60000); // minutos
+  
+    if (diff < 1) return "justo ahora";
+    if (diff < 60) return `${diff} min`;
+    const hours = Math.floor(diff / 60);
+    return `${hours} h`;
+  };
+  
   const renderItem = ({ item }: { item: Report }) => (
     <TouchableOpacity onPress={() => navigation.navigate('ReportDetail', { report: item })}>
-      <View style={styles.item}>
-        <Text style={styles.title}>{item.category}</Text>
-        <Text style={styles.subtitle}> { item.text }</Text>
-        <Text style={styles.subtitle}>
-          Lat: {item.location.lat}, Lon: {item.location.lon}
-        </Text>
-      </View>
+      <ReportCard
+        icon="alert-circle"
+        category={item.category}
+        city={"Osorno"}
+        timeAgo= "Justo ahora" //{formatTimeAgo(item.createdAt)}
+        message={item.text}
+        //imageUri={item.imageUrl} // Asegúrate de que este campo exista en `Report`
+      />
     </TouchableOpacity>
   );
+  
 
   return (
     <View style={styles.container}>

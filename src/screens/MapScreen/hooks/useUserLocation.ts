@@ -23,8 +23,8 @@ const useUserLocation = (
           const region = {
             latitude: coords.latitude,
             longitude: coords.longitude,
-            latitudeDelta: 0.005,
-            longitudeDelta: 0.005,
+            latitudeDelta: 0.001,
+            longitudeDelta: 0.001,
           };
           setLocation(region);
           mapRef.current?.animateToRegion(region, 1000);
