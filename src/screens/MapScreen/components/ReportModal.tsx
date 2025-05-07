@@ -15,9 +15,12 @@ type ModalProps = {
 const ReportModal = ({ visible, selectedLocation, closeModal, updateReports }: ModalProps) => {
     const { user } = useContext(AuthContext); // Obtén el user del contexto global
     const [reportDescription, setReportDescription] = useState("");
+    const [mainCategory, setMainCategory] = useState<"Urgencia" | "Preventiva" | null>(null);
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+    const [shareCameras, setShareCameras] = useState(false);
     const [showConfirmationModal, setShowConfirmationModal] = useState(false);
     const [success, setSuccess] = useState<boolean | null>(null);
+
 
     // Resetear estado cuando se abre el modal
     useEffect(() => {
@@ -72,7 +75,6 @@ const ReportModal = ({ visible, selectedLocation, closeModal, updateReports }: M
             <View style={styles.modalBackground}>
                 <View style={styles.modalContainer}>
                     <Text style={styles.modalTitle}>Crear Reporte</Text>
-
                     {/* Descripción */}
                     <TextInput
                         style={styles.input}
@@ -83,12 +85,32 @@ const ReportModal = ({ visible, selectedLocation, closeModal, updateReports }: M
                         value={reportDescription}
                         onChangeText={setReportDescription}
                     />
-
-                    {/* Categoría */}
-                    <CategorySelector 
-                        selectedCategory={selectedCategory} 
-                        setSelectedCategory={setSelectedCategory}
-                    />
+                    <Text style={styles.title}>Selecciona una categoría</Text>
+                    {/* Categoría principal */}
+                    <View style={styles.selectCategoryButton}>
+                        {["Urgencia", "Preventiva"].map((type) => (
+                            <TouchableOpacity
+                                key={type}
+                                onPress={() => setMainCategory(type as "Urgencia" | "Preventiva")}
+                                style={{
+                                    backgroundColor: mainCategory === type ? "royalblue" : "#ccc",
+                                    padding: 15,
+                                    borderRadius: 5,
+                                    marginHorizontal:5
+                                }}
+                            >
+                                <Text style={{ color: "white", fontWeight: "bold" }}>{type}</Text>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
+  
+                    { mainCategory && (
+                        <CategorySelector
+                            selectedCategory={selectedCategory}
+                            setSelectedCategory={setSelectedCategory}
+                            mainCategory={mainCategory}
+                        />
+                    )}
 
                     {/* Botones */}
                     <View style={styles.buttonContainer}>
@@ -191,4 +213,16 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: "bold",
     },
+    title: {
+        fontSize: 14,
+        fontWeight: "bold",
+        textAlign: "center",
+        marginBottom: 10,
+    },
+    selectCategoryButton: {
+        flex: 1,
+        justifyContent: "center",
+        alignContent: "center",
+        flexDirection:"row"
+    }
 });

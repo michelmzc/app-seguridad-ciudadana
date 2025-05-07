@@ -4,14 +4,16 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 type PropsCategorySelector = {
     selectedCategory: string | null;
     setSelectedCategory: React.Dispatch<React.SetStateAction<string | null>>;
+    mainCategory: "Urgencia" | "Preventiva" | null;
 }
 
 const CategorySelectorr = (props: PropsCategorySelector) => {
   const categories = {
-    Emergencias: ["Actividad sospechosa", "Vandalismo", "Otra emergencia"],
-    Preventivas: ["Luminarias", "Acera", "Semáforos", "Señalización", "Otro"],
+    Urgencia: ["Actividad sospechosa", "Robo","Vandalismo", "Otra"],
+    Preventiva: ["Luminarias", "Acera", "Semáforos", "Señalización", "Otra"],
   };
 
+  const currentCategories = props.mainCategory ? categories[props.mainCategory] : [];
   // Maneja la selección de categoría
   const handleCategorySelect = (category: string) => {
     console.log(props.selectedCategory);
@@ -21,50 +23,43 @@ const CategorySelectorr = (props: PropsCategorySelector) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Selecciona una categoría</Text>
 
-      {Object.entries(categories).map(([section, items]) => (
-        <View key={section} style={styles.section}>
-          <Text style={styles.sectionTitle}>{section}</Text>
-          <View style={styles.categoryContainer}>
-            {items.map((category) => (
-              <TouchableOpacity
-                key={category}
+    {props.mainCategory && (
+      <View style={styles.section}>
+        <View style={styles.categoryContainer}>
+          {currentCategories.map((category) => (
+            <TouchableOpacity
+              key={category}
+              style={[
+                styles.categoryButton,
+                props.selectedCategory === category && styles.selectedCategory,
+              ]}
+              onPress={() => props.setSelectedCategory(category)}
+            >
+              <Text
                 style={[
-                  styles.categoryButton,
-                  props.selectedCategory === category && styles.selectedCategory,
+                  styles.categoryText,
+                  
                 ]}
-                onPress={() => handleCategorySelect(category)}
               >
-                <Text
-                  style={[
-                    styles.categoryText,
-                    props.selectedCategory === category && styles.selectedText,
-                  ]}
-                >
-                  {category}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
+                {category}
+              </Text>
+            </TouchableOpacity>
+          ))}
         </View>
-      ))}
-    </View>
+      </View>
+    )}
+  </View>
   );
 };
-
+ 
 const styles = StyleSheet.create({
   container: {
     padding: 20,
-  },
-  title: {
-    fontSize: 14,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 10,
+    paddingTop: 40
   },
   section: {
-    marginBottom: 10,
+    marginBottom: 5,
   },
   sectionTitle: {
     fontSize: 14,
