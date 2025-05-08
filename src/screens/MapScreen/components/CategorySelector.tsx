@@ -9,8 +9,8 @@ type PropsCategorySelector = {
 
 const CategorySelectorr = (props: PropsCategorySelector) => {
   const categories = {
-    Urgencia: ["Actividad sospechosa", "Robo","Vandalismo", "Otra"],
-    Preventiva: ["Luminarias", "Acera", "Semáforos", "Señalización", "Otra"],
+    Urgencia: ["Actividad sospechosa", "Robo","Vandalismo", "Otro"],
+    Preventiva: ["Luminarias", "Acera", "Semáforos", "Otro"],
   };
 
   const currentCategories = props.mainCategory ? categories[props.mainCategory] : [];
@@ -39,7 +39,7 @@ const CategorySelectorr = (props: PropsCategorySelector) => {
               <Text
                 style={[
                   styles.categoryText,
-                  
+                  props.selectedCategory === category && styles.selectedText,
                 ]}
               >
                 {category}
@@ -56,7 +56,7 @@ const CategorySelectorr = (props: PropsCategorySelector) => {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
-    paddingTop: 40
+    paddingTop: 20
   },
   section: {
     marginBottom: 5,

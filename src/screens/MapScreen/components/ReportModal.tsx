@@ -94,16 +94,16 @@ const ReportModal = ({ visible, selectedLocation, closeModal, updateReports }: M
                                 onPress={() => setMainCategory(type as "Urgencia" | "Preventiva")}
                                 style={{
                                     backgroundColor: mainCategory === type ? "royalblue" : "#ccc",
-                                    padding: 15,
+                                    padding: 8,
                                     borderRadius: 5,
-                                    marginHorizontal:5
+                                    marginHorizontal:5,
+                                    marginBottom:5
                                 }}
                             >
                                 <Text style={{ color: "white", fontWeight: "bold" }}>{type}</Text>
                             </TouchableOpacity>
                         ))}
-                    </View>
-  
+                    
                     { mainCategory && (
                         <CategorySelector
                             selectedCategory={selectedCategory}
@@ -111,7 +111,9 @@ const ReportModal = ({ visible, selectedLocation, closeModal, updateReports }: M
                             mainCategory={mainCategory}
                         />
                     )}
-
+                    </View>
+  
+                    
                     {/* Botones */}
                     <View style={styles.buttonContainer}>
                         <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
@@ -155,6 +157,7 @@ const styles = StyleSheet.create({
         padding: 20,
         width: "90%",
         borderRadius: 10,
+        flexDirection: "column",
     },
     modalTitle: {
         fontSize: 20,
@@ -193,16 +196,21 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
     },
     confirmationContainer: {
-        flex: 1,
+        flex:1,
         justifyContent: "center",
         alignItems: "center",
         backgroundColor: "rgba(0, 0, 0, 0.5)",
+        
     },
     confirmationBox: {
+        width:"80%",
+        maxWidth:"80%",
+        maxHeight: "15%",
         backgroundColor: "white",
         padding: 20,
         borderRadius: 10,
         alignItems: "center",
+        flex: 1
     },
     confirmationText: {
         fontSize: 16,
@@ -212,6 +220,7 @@ const styles = StyleSheet.create({
         color: "#4169e1",
         fontSize: 16,
         fontWeight: "bold",
+        
     },
     title: {
         fontSize: 14,
@@ -220,9 +229,8 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     selectCategoryButton: {
-        flex: 1,
         justifyContent: "center",
         alignContent: "center",
-        flexDirection:"row"
+        flexDirection:"column"
     }
 });
