@@ -4,12 +4,12 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 type PropsCategorySelector = {
     selectedCategory: string | null;
     setSelectedCategory: React.Dispatch<React.SetStateAction<string | null>>;
-    mainCategory: "Urgencia" | "Preventiva" | null;
+    mainCategory: "Emergencia" | "Preventiva" | null;
 }
 
 const CategorySelectorr = (props: PropsCategorySelector) => {
   const categories = {
-    Urgencia: ["Actividad sospechosa", "Robo","Vandalismo", "Otro"],
+    Emergencia: ["Actividad sospechosa", "Robo","Vandalismo", "Otro"],
     Preventiva: ["Luminarias", "Acera", "Semáforos", "Otro"],
   };
 

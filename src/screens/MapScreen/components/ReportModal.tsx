@@ -15,7 +15,7 @@ type ModalProps = {
 const ReportModal = ({ visible, selectedLocation, closeModal, updateReports }: ModalProps) => {
     const { user } = useContext(AuthContext); // Obtén el user del contexto global
     const [reportDescription, setReportDescription] = useState("");
-    const [mainCategory, setMainCategory] = useState<"Urgencia" | "Preventiva" | null>(null);
+    const [mainCategory, setMainCategory] = useState<"Emergencia" | "Preventiva" | null>(null);
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
     const [shareCameras, setShareCameras] = useState(false);
     const [showConfirmationModal, setShowConfirmationModal] = useState(false);
@@ -88,10 +88,10 @@ const ReportModal = ({ visible, selectedLocation, closeModal, updateReports }: M
                     <Text style={styles.title}>Selecciona una categoría</Text>
                     {/* Categoría principal */}
                     <View style={styles.selectCategoryButton}>
-                        {["Urgencia", "Preventiva"].map((type) => (
+                        {["Emergencia", "Preventiva"].map((type) => (
                             <TouchableOpacity
                                 key={type}
-                                onPress={() => setMainCategory(type as "Urgencia" | "Preventiva")}
+                                onPress={() => setMainCategory(type as "Emergencia" | "Preventiva")}
                                 style={{
                                     backgroundColor: mainCategory === type ? "royalblue" : "#ccc",
                                     padding: 8,
