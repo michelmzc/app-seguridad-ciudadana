@@ -1,8 +1,8 @@
 // src/screens/ReportListScreen.tsx
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { getReports } from '../../api/reports';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { Report } from '../../types';
 import { RootStackParamList } from 'navigation/StackNavigator';
@@ -35,6 +35,12 @@ const ReportListScreen = () => {
   useEffect(() => {
     fetchReports();
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchReports();
+    }, [])
+  );
   const formatTimeAgo = (timestamp: string) => {
     const now = new Date();
     const then = new Date(timestamp);
