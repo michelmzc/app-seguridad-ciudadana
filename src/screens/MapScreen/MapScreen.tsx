@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef } from "react";
+import React, { useState, useEffect, useContext, useRef, useCallback } from "react";
 import { View, StyleSheet } from "react-native";
 import  MapView, { Region } from "react-native-maps";
 import { Report } from "../../types";
@@ -11,6 +11,7 @@ import MyLocationButton from "./components/MyLocationButton";
 import CenteredMarker from "./components/CenteredMarker";
 import useUserLocation from "./hooks/useUserLocation";
 import MapViewComponent from "./components/MapViewComponent";
+import { useFocusEffect } from "@react-navigation/native";
 
 
 const INITIAL_OSORNO_REGION: Region = {
@@ -40,6 +41,11 @@ const MapScreen = () => {
     fetchReports();
   }, []);
 
+  useFocusEffect(
+    useCallback(() => {
+      fetchReports();
+    }, [])
+  );
   // Función para actualizar los reportes después de enviar uno
   const updateReports = async () => {
     const response = await getReports();
