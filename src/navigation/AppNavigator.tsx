@@ -4,6 +4,7 @@ import MapScreen from "../screens/MapScreen/MapScreen";
 import CamerasScreen from "../screens/CameraScreen/CameraScreen";
 import ReportListScreen from "../screens/ReportsScreens/ReportListScreen";
 import NotificationsScreen from "../screens/NotificationScreen/NotificationScreen";
+import UserMenuScreen from "../screens/UserMenuScreen/UserMenuScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -29,7 +30,7 @@ export default function AppNavigator(){
       <Tab.Screen name="Reportes" component={ReportListScreen} />
       <Tab.Screen name="Cámaras" component={CamerasScreen} />
       <Tab.Screen name="Notificaciones" component={NotificationsScreen} />
-      <Tab.Screen name="Menu" component={MapScreen} />
+      <Tab.Screen name="Menu" component={UserMenuScreen} />
     </Tab.Navigator>
   );
 }
