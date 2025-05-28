@@ -8,7 +8,7 @@ export const sendReport = async ({
     category,
     location,
     userId,
-  }: {
+  }:{
     text: string;
     category: string;
     location: { latitude: number; longitude: number };

@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useContext, useRef, useCallback } from "react";
 import { View, StyleSheet } from "react-native";
 import  MapView, { Region } from "react-native-maps";
+import { useFocusEffect } from "@react-navigation/native";
+
 import { Report } from "../../types";
 import { getReports } from "../../api/reports";
 import { AuthContext } from "../../api/auth/AuthContext";
@@ -11,7 +13,6 @@ import MyLocationButton from "./components/MyLocationButton";
 import CenteredMarker from "./components/CenteredMarker";
 import useUserLocation from "./hooks/useUserLocation";
 import MapViewComponent from "./components/MapViewComponent";
-import { useFocusEffect } from "@react-navigation/native";
 
 
 const INITIAL_OSORNO_REGION: Region = {
