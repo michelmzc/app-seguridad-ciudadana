@@ -1,4 +1,4 @@
-package com.seguridad.ciudadana.app
+package com.ciudad.segura
 
 import android.app.Application
 import com.facebook.react.PackageList

@@ -1,4 +1,4 @@
-package com.seguridad.ciudadana.app
+package com.ciudad.segura
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
