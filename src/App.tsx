@@ -5,9 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import AppNavigator from "./navigation/StackNavigator";
 import { AuthProvider } from "./api/auth/AuthContext";
-
-import messaging from '@react-native-firebase/messaging';
-import { Alert } from 'react-native';
+import { initializeFCM } from "./notifications/fcm";
 
 interface StandardContainerProps{
   children: ReactNode;
@@ -38,34 +36,8 @@ const StandardContainer: React.FC<StandardContainerProps> = ({ children }) => {
 
 const App = () => {
   useEffect(() => {
-    const setupFCM = async () => {
-      const authStatus = await messaging().requestPermission();
-      const enabled = 
-      authStatus === messaging.AuthorizationStatus.AUTHORIZED || 
-      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-
-      if (enabled) {
-        const token = await messaging().getToken();
-        console.log('FCM Token:', token);
-
-        fetch('http://backend-seguridad-ciudadana.onrender.com:3000/fcm/register', {
-          method: 'POST',
-          headers: {'Contet-Type':'application/json'},
-          body: JSON.stringify({token})
-        });
-      } else {
-        Alert.alert('Permiso para notificaciones denegado');
-      }
-    };
-    setupFCM();
+    initializeFCM();
   }, []);
-
-  useEffect(() => {
-    const unsuscribe = messaging().onMessage(async remoteMessage => {
-      Alert.alert('Nueva notificación', JSON.stringify(remoteMessage.notification))
-    });
-    return unsuscribe;
-  });
 
   return (
     <AuthProvider>
