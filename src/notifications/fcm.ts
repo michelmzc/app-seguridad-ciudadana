@@ -20,10 +20,11 @@ export const initializeFCM = async() => {
         // enviar el "token" a backend
         fetch('https://backend-seguridad-ciudadana.onrender.com/fcm/register', {
           method: 'POST',
-          headers: {'Contet-Type':'application/json'},
+          headers: {'Content-Type':'application/json'},
           body: JSON.stringify({ 
                 "token": token,
-                "userId": "67feaf4b8f2ae8f973b5ca92"
+                "userId": "67feaf4b8f2ae8f973b5ca92",
+                "platform":"android"
             })
         });
 
