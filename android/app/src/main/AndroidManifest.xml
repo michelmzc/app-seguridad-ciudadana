@@ -29,6 +29,8 @@
         android:name="com.google.android.geo.API_KEY"
         android:value="${GOOGLE_MAPS_API_KEY}" />
 
-
+      <meta-data 
+        android:name="com.google.firebase.messaging.default_notificacition_channel_id"
+        android:value="default_channel_id" />
     </application>
 </manifest>
