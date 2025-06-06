@@ -5,7 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import AppNavigator from "./navigation/StackNavigator";
 import { AuthProvider } from "./api/auth/AuthContext";
-import { initializeFCM } from "./notifications/fcm";
+import { FCMWrapper } from "./notifications/fcmwrapper";
 
 interface StandardContainerProps{
   children: ReactNode;
@@ -35,12 +35,11 @@ const StandardContainer: React.FC<StandardContainerProps> = ({ children }) => {
 
 
 const App = () => {
-  useEffect(() => {
-    initializeFCM();
-  }, []);
+  
 
   return (
     <AuthProvider>
+      <FCMWrapper />
       <StandardContainer>
           <AppNavigator />
       </StandardContainer>
