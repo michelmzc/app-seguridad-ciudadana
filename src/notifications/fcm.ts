@@ -1,4 +1,5 @@
 import messaging from '@react-native-firebase/messaging';
+import notifee, { AndroidImportance } from '@notifee/react-native';
 import { Alert } from 'react-native';
 
 export const initializeFCM = async (userId: string) => {
@@ -16,6 +17,7 @@ export const initializeFCM = async (userId: string) => {
     const token = await messaging().getToken();
     console.log('Token FCM:', token);
 
+    // Registrar token con backend
     await fetch('https://backend-seguridad-ciudadana.onrender.com/fcm/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -26,9 +28,30 @@ export const initializeFCM = async (userId: string) => {
       }),
     });
 
-    messaging().onMessage(async remoteMessage => {
-      Alert.alert('Notificación:', JSON.stringify(remoteMessage.notification));
+    // Crear canal de notificación (solo se necesita una vez)
+    const channelId = await notifee.createChannel({
+      id: 'default',
+      name: 'Canal predeterminado',
+      importance: AndroidImportance.HIGH,
     });
+    console.log('Canal de notificación creado:', channelId);
+
+    // Listener para mensajes en foreground
+    messaging().onMessage(async remoteMessage => {
+      console.log('🔔 Mensaje recibido en foreground:', remoteMessage);
+      await notifee.requestPermission();
+      await notifee.displayNotification({
+        title: remoteMessage.notification?.title || 'Notificación',
+        body: remoteMessage.notification?.body || '',
+        android: {
+          channelId: 'default',
+          sound: 'default',
+          importance: AndroidImportance.HIGH,
+          smallIcon: 'ic_launcher', // asegúrate de tener este icono en Android
+        },
+      });
+    });
+
   } catch (error) {
     console.log('Error inicializando FCM', error);
   }
