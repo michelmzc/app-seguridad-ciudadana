@@ -13,6 +13,7 @@ import MyLocationButton from "./components/MyLocationButton";
 import CenteredMarker from "./components/CenteredMarker";
 import useUserLocation from "./hooks/useUserLocation";
 import MapViewComponent from "./components/MapViewComponent";
+import LoginScreen from "../auth/LoginScreen";
 
 
 const INITIAL_OSORNO_REGION: Region = {
@@ -27,11 +28,20 @@ const MapScreen = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [reports, setReports] = useState<Report[]>([]);
   const mapRef = useRef<MapView>(null);
-  // Consume el contexto de autenticación de manera segura
+
   const authContext = useContext(AuthContext);
-  // Asegurarnos de que el contexto no es null antes de acceder a user
-  const userId = authContext?.user?.id || ""; // Si no hay usuario, se usa un string vacío
-  const { goToMyLocation } = useUserLocation(setLocation, mapRef);
+
+  if (authContext.loading) return null; // o un spinner
+
+  if (!authContext.user) return null; // o redirigí al login
+
+  const userId = authContext.user._id;
+  useEffect(() => {
+    console.log('AuthContext.user:', authContext.user);
+    console.log('AuthContext.loading:', authContext.loading);
+  }, [authContext.user, authContext.loading]);
+
+  const { goToMyLocation } = useUserLocation(setLocation, mapRef, userId);
 
   const fetchReports = async () => {
     const response = await getReports();

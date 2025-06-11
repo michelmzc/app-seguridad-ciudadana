@@ -3,10 +3,12 @@ import { Platform, PermissionsAndroid } from "react-native";
 import { check, request, PERMISSIONS, RESULTS } from "react-native-permissions";
 import Geolocation from "@react-native-community/geolocation";
 import { Region } from "react-native-maps";
+import { updateUserLocation } from "../../../api/users";
 
 const useUserLocation = (
   setLocation: (region: Region) => void,
-  mapRef: React.RefObject<any>
+  mapRef: React.RefObject<any>,
+  userId: string
 ) => {
   const goToMyLocation = useCallback(async () => {
     try {
@@ -28,6 +30,19 @@ const useUserLocation = (
           };
           setLocation(region);
           mapRef.current?.animateToRegion(region, 1000);
+          console.log('Intentando actualizar ubicación con:', { userId, lat: coords.latitude, lon: coords.longitude });
+
+          if (userId) {
+            updateUserLocation(userId, coords.latitude, coords.longitude)
+              .then(() => console.log('Ubicación actualizada'))
+              .catch(err => {
+                  console.error('Error actualizando ubicación', err?.message || err);
+                  if (err instanceof Error) {
+                    console.error(err.stack);
+                  }
+                }
+              );
+          }
         },
         (err) => console.log("Ubicación error:", err.message),
         { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
