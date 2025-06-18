@@ -9,6 +9,7 @@ const LoginScreen = ({ navigation }: any) => {
 
     const handleLogin = async () => {
         try {
+            console.log("Intendando autenticar")
             await login(phoneNumber, password);
         } catch (error) {
             console.error(error);

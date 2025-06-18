@@ -45,6 +45,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const profile = await axios.get('/users/profile', {
       headers: { Authorization: `Bearer ${token}` },
     });
+    console.log("Estableciendo usuario: ", profile.data)
     setUser(profile.data);
   };
 
