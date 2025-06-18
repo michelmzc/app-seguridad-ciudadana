@@ -1,6 +1,7 @@
 import messaging from '@react-native-firebase/messaging';
 import notifee, { AndroidImportance } from '@notifee/react-native';
-import { Alert } from 'react-native';
+import { Alert, Platform } from 'react-native';
+import axios from '../api/axios'
 
 export const initializeFCM = async (userId: string) => {
   try {
@@ -17,7 +18,14 @@ export const initializeFCM = async (userId: string) => {
     const token = await messaging().getToken();
     console.log('Token FCM:', token);
 
+    await axios.post('/fcm/register', {
+      token,
+      userId,
+      platform: 'android'
+    });
+
     // Registrar token con backend
+    /*
     await fetch('https://backend-seguridad-ciudadana.onrender.com/fcm/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -27,7 +35,9 @@ export const initializeFCM = async (userId: string) => {
         platform: 'android',
       }),
     });
+    */
 
+    
     // Crear canal de notificación (solo se necesita una vez)
     const channelId = await notifee.createChannel({
       id: 'default',
