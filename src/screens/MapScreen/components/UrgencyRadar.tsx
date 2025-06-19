@@ -11,7 +11,7 @@ const UrgencyRadar = ({ latitude, longitude }: Props) => {
   return (
     <Circle
       center={{ latitude, longitude }}
-      radius={50} // radio fijo
+      radius={100} // radio fijo
       strokeColor="rgba(255,0,0,0.5)"
       fillColor="rgba(255,0,0,0.2)"
     />

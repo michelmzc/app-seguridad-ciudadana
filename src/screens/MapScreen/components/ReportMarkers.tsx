@@ -20,7 +20,7 @@ const ReportMarkers = ({ reports }: Props) => {
       {reports.map((report) => {
         const lat = report.location.lat;
         const lon = report.location.lon;
-        const isUrgency = report.category.toLowerCase() === "actividad sospechosa";
+        const isUrgency = true;
 
         return (
           <React.Fragment key={report._id}>
