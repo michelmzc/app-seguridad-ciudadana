@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useContext } from "react";
 import { View, Text, TextInput, TouchableOpacity, Modal, StyleSheet } from "react-native";
+import Icon from 'react-native-vector-icons/Ionicons';
 import CategorySelector from "./CategorySelector"; // Asegúrate de que la ruta sea correcta
 import { sendReport } from "../../../api/reports"; // Asegúrate de que la ruta sea correcta
 import { AuthContext } from "../../../api/auth/AuthContext"; // Importa el AuthContext
+
 
 type ModalProps = { 
     visible: boolean;
@@ -85,6 +87,21 @@ const ReportModal = ({ visible, selectedLocation, closeModal, updateReports }: M
                         value={reportDescription}
                         onChangeText={setReportDescription}
                     />
+
+                    <TouchableOpacity
+                        style={styles.checkboxContainer}
+                        onPress={() => setShareCameras(prev => !prev)}
+                        >
+                        <View style={[styles.checkbox, shareCameras && styles.checkboxChecked]}>
+                            {shareCameras && (
+                            <Icon name="checkmark" size={16} color="white" />
+                            )}
+                        </View>
+                        <Text style={styles.checkboxLabel}>
+                            Compartir mis cámaras durante 1 hora
+                        </Text>
+                        </TouchableOpacity>
+
                     <Text style={styles.title}>Selecciona una categoría</Text>
                     {/* Categoría principal */}
                     <View style={styles.selectCategoryButton}>
@@ -232,5 +249,30 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignContent: "center",
         flexDirection:"column"
-    }
+    },
+    checkboxContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 15,
+    marginTop: 10,
+    },
+    checkbox: {
+    width: 20,
+    height: 20,
+    borderWidth: 2,
+    borderColor: "royalblue",
+    marginRight: 10,
+    borderRadius: 4,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "white", // recuadro blanco por defecto
+    },
+    checkboxChecked: {
+    backgroundColor: "royalblue", // se pone azul cuando está checkeado
+    },
+    checkboxLabel: {
+    fontSize: 14,
+    color: "#333",
+}
+
 });
