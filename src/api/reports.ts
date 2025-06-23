@@ -32,6 +32,14 @@ export const getReports = async () => {
   } catch (error) {
     console.log('Error al obtener reportes:', error);
     throw new Error('Error al obtener reportes:');
-    return false;
   }
 };
+
+export const shareUserCameras = async (cameraId: string) => {
+  const oneHourLater = new Date(Date.now() + 60 * 60 * 1000); // 1 hora desde ahora
+
+  return axios.patch(`${API_URL}/cameras/${ cameraId }/share`, {
+    isPublic: true,
+    publicUntil: oneHourLater,
+  });
+}

@@ -2,8 +2,9 @@ import React, { useState, useEffect, useContext } from "react";
 import { View, Text, TextInput, TouchableOpacity, Modal, StyleSheet } from "react-native";
 import Icon from 'react-native-vector-icons/Ionicons';
 import CategorySelector from "./CategorySelector"; // Asegúrate de que la ruta sea correcta
-import { sendReport } from "../../../api/reports"; // Asegúrate de que la ruta sea correcta
+import { sendReport, shareUserCameras } from "../../../api/reports"; // Asegúrate de que la ruta sea correcta
 import { AuthContext } from "../../../api/auth/AuthContext"; // Importa el AuthContext
+import { makeCameraPublic } from "../../../api/cameras";
 
 
 type ModalProps = { 
@@ -58,8 +59,14 @@ const ReportModal = ({ visible, selectedLocation, closeModal, updateReports }: M
             await updateReports();
 
             setSuccess(true);
-        } catch (error) {
-            console.error("Error al enviar el reporte", error);
+
+            if (shareCameras){
+                for (const camera of user.cameras){
+                    await makeCameraPublic(camera._id);
+                }
+            }
+        } catch (error: any) {
+            console.log("Error al enviar el reporte:", error?.message ?? error);
             setSuccess(false);
         }
 
