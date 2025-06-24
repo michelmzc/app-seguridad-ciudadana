@@ -9,3 +9,9 @@ export const makeCameraPublic = async (cameraId: string) => {
     isPublic: true,
   });
 };
+
+
+export const getPublicCameras = async () => {
+  const response = await axios.get(`${API_URL}/cameras/public`);
+  return response.data;
+};

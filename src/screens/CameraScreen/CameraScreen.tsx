@@ -4,6 +4,7 @@ import CameraItem from "./components/CameraItem";
 import CameraForm from "./components/CameraForm";
 import { Camera } from "../../types";
 import { getProfile } from "../../api/auth/auth";
+import { getPublicCameras } from "../../api/cameras";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const CamerasScreen: React.FC = () => {
@@ -20,13 +21,30 @@ const CamerasScreen: React.FC = () => {
         if (!token) return;  
 
         const response = await getProfile(token);
-        const fetchedCameras = response.cameras.map((cam: any) => ({
+
+        const ownCameras: Camera[] = response.cameras.map((cam: any) => ({
           id: cam._id,
           name: cam.name,
           streamUrl: cam.stream_url
         }));
+  
+        const publicCamerasData = await getPublicCameras();
+        
 
-        setCameras(fetchedCameras);
+        const publicCameras: Camera[] = publicCamerasData.map((cam: any) => {
+          const lat = cam.owner?.location?.coordinates?.[1];
+          const lon = cam.owner?.location?.coordinates?.[0];
+          const name = cam.owner?.name || "Usuario desconocido";
+
+          return {
+            id: cam._id,
+            name: cam.name,
+            streamUrl: cam.stream_url,
+            sharedBy: `📢 Cámara pública compartida por ${name} en ${lat?.toFixed(4)}, ${lon?.toFixed(4)}`
+          }
+        });
+
+        setCameras([...ownCameras, ...publicCameras]);
       } catch (error) {
         console.log("❌ Error al obtener perfil:", error);
       }

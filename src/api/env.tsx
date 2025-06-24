@@ -1,7 +1,7 @@
 
 const ENV = {
     dev: {
-      API_URL: "http://10.0.2.2:3000" 
+      API_URL: "https://backend-seguridad-ciudadana.onrender.com" //API_URL: "http://10.0.2.2:3000" 
     },
     prod: {
       API_URL: "https://backend-seguridad-ciudadana.onrender.com",

@@ -7,6 +7,7 @@ interface CameraItemProps {
   camera: Camera;
   onEdit: () => void;
   onDelete: (id: string) => void;
+  sharedBy?: string;
 }
 
 const CameraItem: React.FC<CameraItemProps> = ({ camera, onEdit, onDelete }) => {
@@ -15,6 +16,7 @@ const CameraItem: React.FC<CameraItemProps> = ({ camera, onEdit, onDelete }) => 
   return (
     <View style={styles.cameraItem}>
       <Text style={styles.cameraName}>{camera.name}</Text>
+      {camera.sharedBy && ( <Text style={styles.sharedBy}>{camera.sharedBy}</Text> )}
       <Text style={styles.cameraStreamUrl}>{camera.streamUrl}</Text>
 
       <View style={styles.actions}>
@@ -45,7 +47,14 @@ const styles = StyleSheet.create({
   button: { backgroundColor: "#007bff", padding: 8, borderRadius: 5 },
   buttonDelete: { backgroundColor: "#dc3545", padding: 8, borderRadius: 5 },
   buttonStream: { backgroundColor: "#28a745", padding: 8, borderRadius: 5 },
-  buttonText: { color: "white", fontWeight: "bold" }
+  buttonText: { color: "white", fontWeight: "bold" },
+  sharedBy: {
+    fontSize: 13,
+    color: "#6c757d",
+    fontStyle: "italic",
+    marginBottom: 4,
+  }
+  
 });
 
 export default CameraItem;
