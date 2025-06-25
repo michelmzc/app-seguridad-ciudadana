@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, useRef, useCallback } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, ActivityIndicator } from "react-native";
 import  MapView, { Region } from "react-native-maps";
 import { useFocusEffect } from "@react-navigation/native";
 
@@ -31,26 +31,31 @@ const MapScreen = () => {
 
   const authContext = useContext(AuthContext);
 
-  if (authContext.loading) return null; // o un spinner
+  // Call hooks first (but be careful with userId if user is null)
+  // So userId can be null or undefined here
+  const userId = authContext.user ? authContext.user._id : null;
+  
 
-  if (!authContext.user) return null; // o redirigí al login
+  const { goToMyLocation } = useUserLocation(setLocation, mapRef, userId);
 
-  const userId = authContext.user._id;
+  const fetchReports = async () => {
+  try {
+    const response = await getReports();
+    if (response) setReports(response.data);
+  } catch (error) {
+    console.error("Failed to fetch reports:", error);
+  }
+};
+
+  useEffect(() => {
+    fetchReports();
+  }, []);
+
   useEffect(() => {
     console.log('AuthContext.user:', authContext.user);
     console.log('AuthContext.loading:', authContext.loading);
   }, [authContext.user, authContext.loading]);
 
-  const { goToMyLocation } = useUserLocation(setLocation, mapRef, userId);
-
-  const fetchReports = async () => {
-    const response = await getReports();
-    if (response) setReports(response.data);
-  };
-
-  useEffect(() => {
-    fetchReports();
-  }, []);
 
   useFocusEffect(
     useCallback(() => {
@@ -65,6 +70,15 @@ const MapScreen = () => {
     }
   };
 
+  // Early return to avoid accessing `authContext.user._id` too soon
+  if (authContext.loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" />
+      </View>
+  ) ;
+  }
+  if (!authContext.user) return <LoginScreen />;
   return (
     <View style={styles.container}>
       <MapViewComponent 
