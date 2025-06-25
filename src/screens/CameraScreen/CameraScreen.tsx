@@ -89,10 +89,11 @@ const CamerasScreen: React.FC = () => {
         )}
       />
 
+      { /* }
       <TouchableOpacity style={styles.addButton} onPress={() => { setEditingCamera(null); setModalVisible(true); }}>
         <Text style={styles.addButtonText}>+ Agregar Cámara</Text>
       </TouchableOpacity>
-
+      { */ }
     </View>
   );
 };

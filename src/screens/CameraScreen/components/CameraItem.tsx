@@ -15,11 +15,12 @@ const CameraItem: React.FC<CameraItemProps> = ({ camera, onEdit, onDelete }) => 
 
   return (
     <View style={styles.cameraItem}>
-      <Text style={styles.cameraName}>{camera.name}</Text>
+      <Text style={styles.cameraName}>📷 {camera.name}</Text>
       {camera.sharedBy && ( <Text style={styles.sharedBy}>{camera.sharedBy}</Text> )}
-      <Text style={styles.cameraStreamUrl}>{camera.streamUrl}</Text>
 
+      
       <View style={styles.actions}>
+        { /* }
         <TouchableOpacity onPress={onEdit} style={styles.button}>
           <Text style={styles.buttonText}>Editar</Text>
         </TouchableOpacity>
@@ -27,7 +28,7 @@ const CameraItem: React.FC<CameraItemProps> = ({ camera, onEdit, onDelete }) => 
         <TouchableOpacity onPress={() => onDelete(camera.id)} style={styles.buttonDelete}>
           <Text style={styles.buttonText}>Eliminar</Text>
         </TouchableOpacity>
-
+        { */}
         <TouchableOpacity
           onPress={() => navigation.navigate("CameraStream", { camera })}
           style={styles.buttonStream}

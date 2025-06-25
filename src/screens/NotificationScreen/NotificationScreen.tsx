@@ -13,7 +13,7 @@ const sampleNotifications: Notification[] = [
   {
     id: '1',
     type: 'emergencia',
-    title: 'Robo en progreso',
+    title: 'Notificación de ejemplo',
     message: 'Se reportó un robo en Av. Mitre y 9 de Julio. Policía en camino.',
     timestamp: '2025-05-07T13:45:00Z',
   },
